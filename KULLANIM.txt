@@ -1,0 +1,19 @@
+COZZY - TAVSAN SIPARISI
+
+E         Siparis al / urun topla / teslim et / mutfakta malzeme sec
+F         Bahcede bos yere yeniden ek
+B         Mutfaktan tezgaha don (yedek tus)
+Sol-Sag   Tezgahta Sol ile bahceye, Sag ile mutfaga gec
+I         Envanteri ac/kapat
+Sag-Sol   Mutfakta malzeme sec; ilk malzemedeyken Sol ile tezgaha don
+SPACE     Secilen iki malzemeyi birlestir
+Q         Mutfak secimlerini temizle
+F1        Bahce engel kutularini goster/gizle
+
+Ilk gorev:
+1. Tezgahta E ile tavsanin siparisini al.
+2. SOL ile bahceye git.
+3. Bugday ve havuc parsellerinde E ile birer urun topla.
+4. Bahcenin sag kenarindan yuruyerek mutfaga gir.
+5. Bugday ve havucu E ile sec, SPACE ile havuclu kek yap.
+6. Ilk malzemedeyken SOL ile tezgaha don ve E ile keki teslim et.

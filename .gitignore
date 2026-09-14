@@ -1,0 +1,23 @@
+# Build directory
+/build/
+
+# CMake outputs and generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+
+# Executables and binaries
+cozzy.exe
+*.exe
+*.out
+*.o
+*.obj
+
+# IDE specific files
+.vs/
+.vscode/
+*.swp
+*.swo

@@ -139,7 +139,7 @@ void BahceyiGuncelle(BahceDurumu& b, OyunDurumu& oyun,
 
     Vector2 yeni = b.karakterKonumu;
     bool yuruyor = false;
-    const float hiz = 55.0f;
+    const float hiz = 200.0f;
     if (IsKeyDown(KEY_RIGHT)) { yeni.x += hiz*dt; b.yon=SAG; yuruyor=true; }
     else if (IsKeyDown(KEY_LEFT)) { yeni.x -= hiz*dt; b.yon=SOL; yuruyor=true; }
     else if (IsKeyDown(KEY_UP)) { yeni.y -= hiz*dt; b.yon=ARKA; yuruyor=true; }
@@ -155,7 +155,7 @@ void BahceyiGuncelle(BahceDurumu& b, OyunDurumu& oyun,
     if (yuruyor)
     {
         b.animasyonSayaci += dt;
-        if (b.animasyonSayaci >= 0.13f)
+        if (b.animasyonSayaci >= 0.1f)
         {
             b.animasyonSayaci = 0;
             b.animasyonKaresi = (b.animasyonKaresi + 1) % 4;

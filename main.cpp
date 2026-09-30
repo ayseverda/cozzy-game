@@ -42,6 +42,34 @@ void DokuCiz(Texture2D t,float x,float y,float w,float h,int s)
     DrawTexturePro(t,{0,0,(float)t.width,(float)t.height},{x*s,y*s,w*s,h*s},{0,0},0,WHITE);
 }
 
+void FotoCercevesiCiz(Texture2D foto,float x,float y,float w,float h,int s)
+{
+    DrawRectangle((int)((x+2)*s),(int)((y+2)*s),(int)(w*s),(int)(h*s),Fade(DARKBROWN,0.45f));
+    DrawRectangle((int)(x*s),(int)(y*s),(int)(w*s),(int)(h*s),RAYWHITE);
+
+    float oranHedef=w/h;
+    float oranFoto=(float)foto.width/foto.height;
+    Rectangle kaynak={0,0,(float)foto.width,(float)foto.height};
+    if(oranFoto>oranHedef)
+    {
+        kaynak.width=foto.height*oranHedef;
+        kaynak.x=(foto.width-kaynak.width)/2.0f;
+    }
+    else
+    {
+        kaynak.height=foto.width/oranHedef;
+        kaynak.y=(foto.height-kaynak.height)/2.0f;
+    }
+    Rectangle hedef={(x+2)*s,(y+2)*s,(w-4)*s,(h-4)*s};
+    DrawTexturePro(foto,kaynak,hedef,{0,0},0,WHITE);
+}
+
+void KitapOklariniCiz(int s)
+{
+    DrawTriangle({39.0f*s,120.0f*s},{51.0f*s,111.0f*s},{51.0f*s,129.0f*s},DARKBROWN);
+    DrawTriangle({281.0f*s,120.0f*s},{269.0f*s,111.0f*s},{269.0f*s,129.0f*s},DARKBROWN);
+}
+
 void EnvanteriCiz(const OyunDurumu& o,Texture2D panel,
                   Texture2D bugday,Texture2D havuc,Texture2D cilek,
                   Texture2D salatalik,Texture2D elma,Texture2D kek,
@@ -121,6 +149,18 @@ int main()
     Texture2D envanter=LoadTexture("assets/envanter.png");
     Texture2D kitapTezgah=LoadTexture("assets/kitap_tezgah.png");
     Texture2D acikKitap=LoadTexture("assets/open_book.png");
+    const char* defterFotoYollari[10]={
+        "assets/bahce-karakter.png","assets/karakter-mutfak.png",
+        "assets/bahce-tavsan.png","assets/selfie-bunny.png",
+        "assets/bahce-capybara.png","assets/selfie-capy.png",
+        "assets/bahce-kurba.png","assets/selfie-kurba.png",
+        "assets/bahce-kirpi.png","assets/selfie-kirpi.png"};
+    Texture2D defterFotograflari[10];
+    for(int i=0;i<10;++i)
+    {
+        defterFotograflari[i]=LoadTexture(defterFotoYollari[i]);
+        SetTextureFilter(defterFotograflari[i],TEXTURE_FILTER_BILINEAR);
+    }
 
     Texture2D filtrelenecek[]={bg.arkaPlan,bg.karakterOn,bg.karakterArka,bg.karakterSag,
         bg.karakterSol,bg.bugday,bg.havuc,bg.cilek,bg.salatalik,bg.elma,
@@ -136,6 +176,7 @@ int main()
     MutfakDurumu mutfak; MutfagiBaslat(mutfak);
     Sahne sahne=TEZGAH_SAHNESI;
     bool kitapAcik=true;
+    int kitapSayfasi=0;
 
     while(!WindowShouldClose())
     {
@@ -155,6 +196,19 @@ int main()
             kitapAcik=!kitapAcik;
         if(kitapAcik && IsKeyPressed(KEY_ESCAPE))
             kitapAcik=false;
+        if(kitapAcik && IsKeyPressed(KEY_RIGHT) && kitapSayfasi<4)kitapSayfasi++;
+        if(kitapAcik && IsKeyPressed(KEY_LEFT) && kitapSayfasi>0)kitapSayfasi--;
+        if(kitapAcik && GetMouseWheelMove()<0 && kitapSayfasi<4)kitapSayfasi++;
+        if(kitapAcik && GetMouseWheelMove()>0 && kitapSayfasi>0)kitapSayfasi--;
+        if(kitapAcik && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
+            Vector2 fare=GetMousePosition();
+            float fareX=fare.x/S, fareY=fare.y/S;
+            if(fareY>=50 && fareY<=190 && fareX>=25 && fareX<160 && kitapSayfasi>0)
+                kitapSayfasi--;
+            else if(fareY>=50 && fareY<=190 && fareX>=160 && fareX<=295 && kitapSayfasi<4)
+                kitapSayfasi++;
+        }
 
         if(!kitapAcik && IsKeyPressed(KEY_I))
         {
@@ -194,6 +248,11 @@ int main()
         {
             DrawRectangle(0,0,320*S,240*S,Fade(BLACK,0.45f));
             DokuCiz(acikKitap,32,40,256,160,S);
+            int solFoto=kitapSayfasi*2;
+            int sagFoto=solFoto+1;
+            FotoCercevesiCiz(defterFotograflari[solFoto],80,74,66,50,S);
+            FotoCercevesiCiz(defterFotograflari[sagFoto],174,74,66,50,S);
+            KitapOklariniCiz(S);
         }
         EndDrawing();
     }
@@ -208,6 +267,7 @@ int main()
     UnloadTexture(tg.kurbaga); UnloadTexture(tg.kurbagaMutlu);
     UnloadTexture(tg.granola); UnloadTexture(tg.elmaliTurta); UnloadTexture(tg.sandvic);
     UnloadTexture(kitapTezgah); UnloadTexture(acikKitap);
+    for(int i=0;i<10;++i)UnloadTexture(defterFotograflari[i]);
     if(sesHazir)
     {
         SesleriKapat(sesler);

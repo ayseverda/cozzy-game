@@ -43,6 +43,7 @@ enum UrunTuru
 
 struct OyunDurumu
 {
+    int sevgiBagi = 0;
     int bugday = 0;
     int havuc = 0;
     int cilek = 0;

@@ -9,6 +9,8 @@ Sag-Sol   Mutfakta malzeme sec; ilk malzemedeyken Sol ile tezgaha don
 SPACE     Secilen iki malzemeyi birlestir
 Q         Mutfak secimlerini temizle
 F1        Bahce engel kutularini goster/gizle
+J         Tezgahtaki bos kitabi ac/kapat
+ESC       Acik kitabi kapat
 
 Siparis sirasi: Tavsan, kapibara, kirpi, kurbaga. Her teslimden sonra
 tezgahta gorunen hayvanin E ile siparisini alip devam et.

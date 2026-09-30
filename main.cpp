@@ -74,6 +74,7 @@ int main()
     const int S=3;
     InitWindow(320*S,240*S,"Cozzy");
     SetTargetFPS(60);
+    SetExitKey(KEY_NULL); // ESC kitap penceresini kapatsin; oyunu sonlandirmasin.
 
     InitAudioDevice();
     OyunSesleri sesler={0};
@@ -118,13 +119,15 @@ int main()
     mg.salatalik=bg.salatalik; mg.elma=bg.elma; mg.havucluKek=tg.havucluKek;
     mg.granola=tg.granola; mg.elmaliTurta=tg.elmaliTurta; mg.sandvic=tg.sandvic;
     Texture2D envanter=LoadTexture("assets/envanter.png");
+    Texture2D kitapTezgah=LoadTexture("assets/kitap_tezgah.png");
+    Texture2D acikKitap=LoadTexture("assets/open_book.png");
 
     Texture2D filtrelenecek[]={bg.arkaPlan,bg.karakterOn,bg.karakterArka,bg.karakterSag,
         bg.karakterSol,bg.bugday,bg.havuc,bg.cilek,bg.salatalik,bg.elma,
         tg.arkaPlan,tg.tavsanSiparis,tg.tavsanMutlu,tg.balon,tg.havucluKek,
         tg.capybara,tg.capybaraMutlu,tg.kirpi,tg.kirpiMutlu,tg.kurbaga,tg.kurbagaMutlu,
         tg.granola,tg.elmaliTurta,tg.sandvic,
-        mg.arkaPlan,envanter};
+        mg.arkaPlan,envanter,kitapTezgah,acikKitap};
     for(Texture2D& t:filtrelenecek)Filtrele(t);
 
     OyunDurumu oyun;
@@ -132,6 +135,7 @@ int main()
     TezgahDurumu tezgah; TezgahiBaslat(tezgah);
     MutfakDurumu mutfak; MutfagiBaslat(mutfak);
     Sahne sahne=TEZGAH_SAHNESI;
+    bool kitapAcik=true;
 
     while(!WindowShouldClose())
     {
@@ -147,15 +151,23 @@ int main()
         const int oncekiHazirYemek=HazirYemekSayisi(oyun);
         const bool oncekiSiparisTamamlandi=oyun.siparisTamamlandi;
 
-        if(IsKeyPressed(KEY_I))
+        if(IsKeyPressed(KEY_J) && !oyun.envanterAcik)
+            kitapAcik=!kitapAcik;
+        if(kitapAcik && IsKeyPressed(KEY_ESCAPE))
+            kitapAcik=false;
+
+        if(!kitapAcik && IsKeyPressed(KEY_I))
         {
             oyun.envanterAcik=!oyun.envanterAcik;
         }
-        if(!oyun.envanterAcik)
+        if(!oyun.envanterAcik && !kitapAcik)
         {
             if(sahne==BAHCE_SAHNESI)BahceyiGuncelle(bahce,oyun,sahne,dt);
             else if(sahne==TEZGAH_SAHNESI)TezgahiGuncelle(tezgah,oyun,sahne,dt);
             else MutfagiGuncelle(mutfak,oyun,sahne,dt);
+
+            if(!oncekiSiparisTamamlandi && oyun.siparisTamamlandi)
+                oyun.sevgiBagi+=10;
 
             if(sesHazir)
             {
@@ -176,6 +188,13 @@ int main()
         else if(sahne==TEZGAH_SAHNESI)TezgahiCiz(tezgah,oyun,tg,S);
         else MutfagiCiz(mutfak,oyun,mg,S);
         if(oyun.envanterAcik)EnvanteriCiz(oyun,envanter,bg.bugday,bg.havuc,bg.cilek,bg.salatalik,bg.elma,tg.havucluKek,tg.granola,tg.elmaliTurta,tg.sandvic,S);
+        if(!kitapAcik && sahne==TEZGAH_SAHNESI)
+            DokuCiz(kitapTezgah,78,134,64,48,S);
+        if(kitapAcik)
+        {
+            DrawRectangle(0,0,320*S,240*S,Fade(BLACK,0.45f));
+            DokuCiz(acikKitap,32,40,256,160,S);
+        }
         EndDrawing();
     }
 
@@ -188,6 +207,7 @@ int main()
     UnloadTexture(tg.kirpi); UnloadTexture(tg.kirpiMutlu);
     UnloadTexture(tg.kurbaga); UnloadTexture(tg.kurbagaMutlu);
     UnloadTexture(tg.granola); UnloadTexture(tg.elmaliTurta); UnloadTexture(tg.sandvic);
+    UnloadTexture(kitapTezgah); UnloadTexture(acikKitap);
     if(sesHazir)
     {
         SesleriKapat(sesler);

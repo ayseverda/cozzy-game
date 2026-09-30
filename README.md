@@ -32,6 +32,8 @@ Cozzy, oyuncunun bahçede malzeme topladığı, mutfakta tarif hazırladığı v
 | `B` | Mutfaktan tezgâha dön |
 | `F` | Bahçede boş yere yeniden ek |
 | `I` | Envanteri aç/kapat |
+| `J` | Tezgâhtaki boş kitabı aç/kapat |
+| `Esc` | Açık kitabı kapat |
 | `F1` | Bahçe engel kutularını göster/kapat |
 | `F3` | Toplama sesini dinle |
 | `F4` | Yemek hazırlama sesini dinle |
@@ -56,7 +58,7 @@ Oyunu proje kök klasöründen başlat; görseller ve sesler `assets/` altındak
 ## Proje yapısı
 
 ```text
-assets/          Oyun görselleri ve sesleri
+assets/          Oyun görselleri ve sesleri; kitap için kitap_tezgah.png ve open_book.png
 assets/sesler/   WAV efektleri ve pop/hihi seslerini üreten Python betiği
 main.cpp         Oyun döngüsü, kaynak yükleme ve ses tetikleme
 bahce.cpp/.h     Bahçe sahnesi ve hareket/toplama

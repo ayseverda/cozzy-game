@@ -73,4 +73,4 @@ CMakeLists.txt   CMake yapılandırması
 - Tarif hazırlama: `assets/sesler/hihi_yeni.wav`
 - Sipariş teslimi: `assets/sesler/classic_diririm.wav`
 
-`assets/sesler/olustur.py`, `pop_yeni.wav` ve `hihi_yeni.wav` dosyalarını yeniden üretir. Betik NumPy gerektirir. `classic_diririm.wav` ayrı bir WAV dosyasıdır.
+Bu efektler buzzerı taklit eden tek perdeli kısa bip ritimleridir. `assets/sesler/olustur.py` standart Python ile üçünü de yeniden üretir; ek paket gerekmez. Aktif buzzerla donanımda aynı ritimleri aç/kapa darbeleriyle çalabiliriz, WAV dosyasının kendisini buzzer çalamaz.

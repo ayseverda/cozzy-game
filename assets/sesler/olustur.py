@@ -1,53 +1,46 @@
-import numpy as np
+﻿import math
+import struct
 import wave
 from pathlib import Path
 
-SAMPLE_RATE = 44100
+SAMPLE_RATE = 22050
+BUZZER_FREQUENCY = 2200
+VOLUME = 0.22
 OUTPUT_DIR = Path(__file__).resolve().parent
 
-def save_wav(filename, data):
-    audio = np.int16(np.clip(data, -1.0, 1.0) * 32767)
-    with wave.open(filename, 'w') as f:
-        f.setnchannels(1)
-        f.setsampwidth(2)
-        f.setframerate(SAMPLE_RATE)
-        f.writeframes(audio.tobytes())
 
-# --- 1. YENİLENMİŞ MEYVE TOPLAMA SESİ: Tok, Çıtır ve Tatlı Bir "Bloop" ---
-def generate_better_pop():
-    duration = 0.08
-    t = np.linspace(0, duration, int(SAMPLE_RATE * duration))
-    
-    # Çok yükseklerden başlatıp rahatsız etmeyecek şekilde orta-üst bir tondan aşağı kaydırıyoruz
-    freq = np.linspace(600, 250, len(t))
-    
-    # Sinüs ve yumuşak üçgen dalga karışımı (Asla çırtlak değil, tok ve sevimli)
-    wave_data = 0.7 * np.sin(2 * np.pi * freq * t) + 0.3 * np.sin(2 * np.pi * (freq * 0.5) * t)
-    wave_data *= np.exp(-t * 22) # Hızlıca sönümlenip tok bir vuruş bırakır
-    
-    save_wav(str(OUTPUT_DIR / "pop_yeni.wav"), wave_data)
+def make_beeps(on_times, gap=0.045):
+    """Make same-pitch buzzer pulses; on_times are pulse lengths in seconds."""
+    samples = []
+    for pulse_index, duration in enumerate(on_times):
+        count = int(SAMPLE_RATE * duration)
+        ramp = max(1, int(SAMPLE_RATE * 0.002))
+        for i in range(count):
+            envelope = min(1.0, i / ramp, (count - 1 - i) / ramp)
+            wave_value = 1.0 if math.sin(2 * math.pi * BUZZER_FREQUENCY * i / SAMPLE_RATE) >= 0 else -1.0
+            samples.append(wave_value * VOLUME * max(0.0, envelope))
+        if pulse_index + 1 < len(on_times):
+            samples.extend([0.0] * int(SAMPLE_RATE * gap))
+    return samples
 
-# --- 2. YENİLENMİŞ MÜŞTERİ MUTLULUK SESİ: Sevimli ve Klasik Bir Onay ("İki Tonlu Tatlı Ses") ---
-def generate_better_happy():
-    # Klasik oyunlarda dükkan/görev tamamlandığında çalan o yumuşak "ba-ding!" tonu
-    notes = [523.25, 783.99] # C5 ve G5 (Tatlı bir beşli aralık)
-    note_duration = 0.1
-    pause = 0.015
-    
-    full_data = []
-    for i, freq in enumerate(notes):
-        t = np.linspace(0, note_duration, int(SAMPLE_RATE * note_duration))
-        # İkinci nota (mutluluk vuruşu) biraz daha canlı ve baskın çıkar
-        amplitude = 0.8 if i == 1 else 0.6
-        note_wave = amplitude * np.sin(2 * np.pi * freq * t) * np.exp(-t * 10)
-        full_data.append(note_wave)
-        if i < len(notes) - 1:
-            full_data.append(np.zeros(int(SAMPLE_RATE * pause)))
-            
-    wave_data = np.concatenate(full_data)
-    save_wav(str(OUTPUT_DIR / "hihi_yeni.wav"), wave_data)
+
+def save_wav(filename, samples):
+    pcm = bytearray()
+    for sample in samples:
+        sample = max(-1.0, min(1.0, sample))
+        pcm.extend(struct.pack("<h", int(sample * 32767)))
+    with wave.open(str(OUTPUT_DIR / filename), "wb") as wav:
+        wav.setnchannels(1)
+        wav.setsampwidth(2)
+        wav.setframerate(SAMPLE_RATE)
+        wav.writeframes(pcm)
+
 
 if __name__ == "__main__":
-    generate_better_pop()
-    generate_better_happy()
-    print("Yeni sesler hazır: pop_yeni.wav ve hihi_yeni.wav")
+    # Meyve toplama: iki minik pit.
+    save_wav("pop_yeni.wav", make_beeps([0.055, 0.075], gap=0.055))
+    # Yemek hazirlama: diririm ritmi, son bip daha uzun.
+    save_wav("hihi_yeni.wav", make_beeps([0.055, 0.055, 0.055, 0.16], gap=0.04))
+    # Teslim: iki daha uzun, memnuniyet bildirimi.
+    save_wav("classic_diririm.wav", make_beeps([0.10, 0.13], gap=0.07))
+    print("Buzzer tarzinda WAV sesleri olusturuldu.")

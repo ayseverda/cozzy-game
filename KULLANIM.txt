@@ -21,3 +21,8 @@ Bugday + salatalik   = sandvic (kurbaga)
 
 Malzemeleri bahceden E ile topla. Hazir yemegi tezgaha getirip E ile teslim et.
 
+Ses deneme tuslari:
+F3        Toplama bipleri (pop_yeni.wav)
+F4        Yemek hazirlama ritmi (hihi_yeni.wav)
+F5        Teslim ritmi (classic_diririm.wav)
+

@@ -12,6 +12,9 @@ struct MutfakGorselleri
     Texture2D salatalik;
     Texture2D elma;
     Texture2D havucluKek;
+    Texture2D granola;
+    Texture2D elmaliTurta;
+    Texture2D sandvic;
 };
 
 struct MutfakDurumu
@@ -22,6 +25,7 @@ struct MutfakDurumu
     float parlamaSuresi;
     float mesajSuresi;
     bool tarifBasarili;
+    YemekTuru hazirlananYemek;
 };
 
 void MutfagiBaslat(MutfakDurumu& mutfak);

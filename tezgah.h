@@ -10,6 +10,15 @@ struct TezgahGorselleri
     Texture2D tavsanMutlu;
     Texture2D balon;
     Texture2D havucluKek;
+    Texture2D capybara;
+    Texture2D capybaraMutlu;
+    Texture2D kirpi;
+    Texture2D kirpiMutlu;
+    Texture2D kurbaga;
+    Texture2D kurbagaMutlu;
+    Texture2D granola;
+    Texture2D elmaliTurta;
+    Texture2D sandvic;
 };
 
 struct TezgahDurumu

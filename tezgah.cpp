@@ -2,6 +2,54 @@
 
 namespace
 {
+YemekTuru SiparisYemegi(MusteriTuru m)
+{
+    if(m==CAPYBARA)return GRANOLA;
+    if(m==KIRPI)return ELMALI_TURTA;
+    if(m==KURBAGA)return SANDVIC;
+    return HAVUCLU_KEK;
+}
+
+Texture2D YemekDokusu(const TezgahGorselleri& g,YemekTuru y)
+{
+    if(y==GRANOLA)return g.granola;
+    if(y==ELMALI_TURTA)return g.elmaliTurta;
+    if(y==SANDVIC)return g.sandvic;
+    return g.havucluKek;
+}
+
+int YemekAdedi(const OyunDurumu& o,YemekTuru y)
+{
+    if(y==GRANOLA)return o.granola;
+    if(y==ELMALI_TURTA)return o.elmaliTurta;
+    if(y==SANDVIC)return o.sandvic;
+    return o.havucluKek;
+}
+
+void YemegiAzalt(OyunDurumu& o,YemekTuru y)
+{
+    if(y==GRANOLA)o.granola--;
+    else if(y==ELMALI_TURTA)o.elmaliTurta--;
+    else if(y==SANDVIC)o.sandvic--;
+    else o.havucluKek--;
+}
+
+const char* YemekAdi(YemekTuru y)
+{
+    if(y==GRANOLA)return "GRANOLA";
+    if(y==ELMALI_TURTA)return "ELMALI TURTA";
+    if(y==SANDVIC)return "SANDVIC";
+    return "HAVUCLU KEK";
+}
+
+Texture2D MusteriDokusu(const TezgahGorselleri& g,MusteriTuru m,bool mutlu)
+{
+    if(m==CAPYBARA)return mutlu?g.capybaraMutlu:g.capybara;
+    if(m==KIRPI)return mutlu?g.kirpiMutlu:g.kirpi;
+    if(m==KURBAGA)return mutlu?g.kurbagaMutlu:g.kurbaga;
+    return mutlu?g.tavsanMutlu:g.tavsanSiparis;
+}
+
 void DokuCiz(
     Texture2D doku,
     float x,
@@ -43,16 +91,14 @@ void PastaDolabiniCiz(
 {
     // Şimdilik dolaba yalnızca hazırlanmış
     // havuçlu kek yerleştiriliyor.
-    if (oyun.havucluKek > 0)
+    const Texture2D yemekler[4]={gorseller.havucluKek,gorseller.granola,
+                                 gorseller.elmaliTurta,gorseller.sandvic};
+    const int adetler[4]={oyun.havucluKek,oyun.granola,oyun.elmaliTurta,oyun.sandvic};
+    const Vector2 yerler[4]={{252,97},{278,91},{252,127},{281,127}};
+    for(int i=0;i<4;++i)
     {
-        DokuCiz(
-            gorseller.havucluKek,
-            268,
-            109,
-            20,
-            20,
-            buyutme
-        );
+        float boyut=(i==1)?30.0f:24.0f;
+        if(adetler[i]>0)DokuCiz(yemekler[i],yerler[i].x,yerler[i].y,boyut,boyut,buyutme);
     }
 
     // Ürünlerin camın arkasında görünmesi
@@ -67,35 +113,35 @@ void PastaDolabiniCiz(
     // Üst raf camı
     DrawRectangle(
         250 * buyutme,
-        99 * buyutme,
+        98 * buyutme,
         57 * buyutme,
-        43 * buyutme,
+        22 * buyutme,
         camRengi
     );
 
     // Alt raf camı
     DrawRectangle(
         250 * buyutme,
-        149 * buyutme,
+        122 * buyutme,
         57 * buyutme,
-        29 * buyutme,
+        31 * buyutme,
         camRengi
     );
 
     // Cam üzerindeki küçük parlama çizgileri
     DrawLine(
-        254 * buyutme,
-        102 * buyutme,
+        253 * buyutme,
+        100 * buyutme,
         271 * buyutme,
-        102 * buyutme,
+        100 * buyutme,
         Fade(WHITE, 0.45f)
     );
 
     DrawLine(
-        254 * buyutme,
-        152 * buyutme,
+        253 * buyutme,
+        124 * buyutme,
         267 * buyutme,
-        152 * buyutme,
+        124 * buyutme,
         Fade(WHITE, 0.35f)
     );
 }
@@ -130,6 +176,14 @@ void TezgahiGuncelle(
     {
         tezgah.mesajSuresi -= gecenSure;
     }
+    if(oyun.siparisTamamlandi && tezgah.mesajSuresi<=0.0f)
+    {
+        oyun.musteri=static_cast<MusteriTuru>((oyun.musteri+1)%4);
+        oyun.siparisAlindi=false;
+        oyun.siparisTamamlandi=false;
+        tezgah.tavsanKaresi=0;
+        tezgah.animasyonSayaci=0.0f;
+    }
 
     // Tezgâhtan sola gidince bahçe
     if (IsKeyPressed(KEY_LEFT))
@@ -156,16 +210,14 @@ void TezgahiGuncelle(
         }
 
         // Kek hazırsa tavşana teslim et
-        else if (
-            !oyun.siparisTamamlandi &&
-            oyun.havucluKek > 0
-        )
+        else if (!oyun.siparisTamamlandi &&
+                 YemekAdedi(oyun,SiparisYemegi(oyun.musteri))>0)
         {
-            oyun.havucluKek--;
+            YemegiAzalt(oyun,SiparisYemegi(oyun.musteri));
 
             oyun.siparisTamamlandi = true;
 
-            tezgah.mesajSuresi = 3.0f;
+            tezgah.mesajSuresi = 2.0f;
             tezgah.tavsanKaresi = 0;
             tezgah.animasyonSayaci = 0.0f;
         }
@@ -212,19 +264,9 @@ void TezgahiCiz(
 
     Texture2D aktifTavsan;
 
-    if (oyun.siparisTamamlandi)
-    {
-        aktifTavsan =
-            gorseller.tavsanMutlu;
-    }
-    else
-    {
-        aktifTavsan =
-            gorseller.tavsanSiparis;
-    }
+    aktifTavsan = MusteriDokusu(gorseller,oyun.musteri,oyun.siparisTamamlandi);
 
-    int kareSayisi =
-        aktifTavsan.width / 64;
+    int kareSayisi = aktifTavsan.width / 64;
 
     if (kareSayisi < 1)
     {
@@ -235,21 +277,13 @@ void TezgahiCiz(
         tezgah.tavsanKaresi %
         kareSayisi;
 
-    Rectangle tavsanKaynak = {
-        static_cast<float>(
-            aktifKare * 64
-        ),
-        0,
-        64,
-        80
-    };
+    Rectangle tavsanKaynak = {static_cast<float>(aktifKare * 64),0,64,80};
 
-    Rectangle tavsanHedef = {
-        128.0f * buyutme,
-        72.0f * buyutme,
-        64.0f * buyutme,
-        80.0f * buyutme
-    };
+    Rectangle tavsanHedef;
+    if(oyun.musteri==CAPYBARA)
+        tavsanHedef={107.0f*buyutme,22.0f*buyutme,106.0f*buyutme,132.0f*buyutme};
+    else
+        tavsanHedef={123.0f*buyutme,60.0f*buyutme,74.0f*buyutme,92.0f*buyutme};
 
     DrawTexturePro(
         aktifTavsan,
@@ -259,7 +293,6 @@ void TezgahiCiz(
         0,
         WHITE
     );
-
     // ---------------------------------
     // SİPARİŞ BALONU
     // ---------------------------------
@@ -268,23 +301,21 @@ void TezgahiCiz(
     {
         DokuCiz(
             gorseller.balon,
-            194,
-            18,
-            96,
-            64,
+            163,
+            38,
+            100,
+            66,
             buyutme
         );
 
         // Kek balonun görünen beyaz
         // bölümünün tam ortasında.
-        DokuCiz(
-            gorseller.havucluKek,
-            231,
-            30,
-            20,
-            20,
-            buyutme
-        );
+        bool granolaSiparisi=SiparisYemegi(oyun.musteri)==GRANOLA;
+        float ikonBoyutu=granolaSiparisi?27.0f:22.0f;
+        float ikonMerkezY=granolaSiparisi?57.0f:61.0f;
+        DokuCiz(YemekDokusu(gorseller,SiparisYemegi(oyun.musteri)),
+                213.0f-ikonBoyutu/2.0f,ikonMerkezY-ikonBoyutu/2.0f,
+                ikonBoyutu,ikonBoyutu,buyutme);
     }
 
     // ---------------------------------
@@ -293,8 +324,7 @@ void TezgahiCiz(
 
     if (tezgah.mesajSuresi > 0.0f)
     {
-       const char* yazi =
-            "HAVUCLU KEKI GETIR!";
+       const char* yazi = TextFormat("%s ISTIYOR!",YemekAdi(SiparisYemegi(oyun.musteri)));
 
         if (!oyun.siparisAlindi)
         {
@@ -302,11 +332,11 @@ void TezgahiCiz(
         }
         else if (oyun.siparisTamamlandi)
         {
-            yazi = "TESKKURLER! COK GUZEL!";
+            yazi = "AFIYET OLSUN!";
         }
-        else if (oyun.havucluKek > 0)
+        else if (YemekAdedi(oyun,SiparisYemegi(oyun.musteri)) > 0)
         {
-            yazi = "E ILE KEKI VER";
+            yazi = TextFormat("E ILE VER: %s",YemekAdi(SiparisYemegi(oyun.musteri)));
         }
 
         DrawRectangle(

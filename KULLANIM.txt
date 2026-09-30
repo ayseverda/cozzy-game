@@ -1,4 +1,4 @@
-COZZY - TAVSAN SIPARISI
+COZZY - HAYVANLARIN SIPARISLERI
 
 E         Siparis al / urun topla / teslim et / mutfakta malzeme sec
 F         Bahcede bos yere yeniden ek
@@ -10,10 +10,14 @@ SPACE     Secilen iki malzemeyi birlestir
 Q         Mutfak secimlerini temizle
 F1        Bahce engel kutularini goster/gizle
 
-Ilk gorev:
-1. Tezgahta E ile tavsanin siparisini al.
-2. SOL ile bahceye git.
-3. Bugday ve havuc parsellerinde E ile birer urun topla.
-4. Bahcenin sag kenarindan yuruyerek mutfaga gir.
-5. Bugday ve havucu E ile sec, SPACE ile havuclu kek yap.
-6. Ilk malzemedeyken SOL ile tezgaha don ve E ile keki teslim et.
+Siparis sirasi: Tavsan, kapibara, kirpi, kurbaga. Her teslimden sonra
+tezgahta gorunen hayvanin E ile siparisini alip devam et.
+
+Tarifler (malzemeleri mutfakta secip SPACE'e bas):
+Bugday + havuc       = havuclu kek (tavsan)
+Bugday + cilek       = granola (kapibara)
+Bugday + elma        = elmali turta (kirpi)
+Bugday + salatalik   = sandvic (kurbaga)
+
+Malzemeleri bahceden E ile topla. Hazir yemegi tezgaha getirip E ile teslim et.
+

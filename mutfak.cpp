@@ -23,6 +23,17 @@ Texture2D Doku(const MutfakGorselleri& g,UrunTuru u)
     if(u==CILEK)return g.cilek; if(u==SALATALIK)return g.salatalik;
     return g.elma;
 }
+Texture2D YemekDokusu(const MutfakGorselleri& g,YemekTuru y)
+{
+    if(y==GRANOLA)return g.granola;
+    if(y==ELMALI_TURTA)return g.elmaliTurta;
+    if(y==SANDVIC)return g.sandvic;
+    return g.havucluKek;
+}
+bool Eslesiyor(UrunTuru a,UrunTuru b,UrunTuru x,UrunTuru y)
+{
+    return (a==x&&b==y)||(a==y&&b==x);
+}
 void DokuCiz(Texture2D t,float x,float y,float w,float h,int s,Color renk=WHITE)
 {
     DrawTexturePro(t,{0,0,(float)t.width,(float)t.height},{x*s,y*s,w*s,h*s},{0,0},0,renk);
@@ -33,6 +44,7 @@ void MutfagiBaslat(MutfakDurumu& m)
 {
     m.imlec=0; m.secim1=URUN_YOK; m.secim2=URUN_YOK;
     m.parlamaSuresi=0; m.mesajSuresi=0; m.tarifBasarili=false;
+    m.hazirlananYemek=HAVUCLU_KEK;
 }
 
 void MutfagiGuncelle(MutfakDurumu& m,OyunDurumu& o,Sahne& sahne,float dt)
@@ -60,11 +72,25 @@ void MutfagiGuncelle(MutfakDurumu& m,OyunDurumu& o,Sahne& sahne,float dt)
     }
     if(IsKeyPressed(KEY_SPACE) && m.secim1!=URUN_YOK && m.secim2!=URUN_YOK)
     {
-        bool kek=(m.secim1==BUGDAY&&m.secim2==HAVUC)||(m.secim1==HAVUC&&m.secim2==BUGDAY);
-        m.tarifBasarili=kek; m.mesajSuresi=2.0f;
-        if(kek)
+        bool tarif=false;
+        YemekTuru yemek=HAVUCLU_KEK;
+        if(Eslesiyor(m.secim1,m.secim2,BUGDAY,HAVUC))
+        { tarif=true; yemek=HAVUCLU_KEK; }
+        else if(Eslesiyor(m.secim1,m.secim2,BUGDAY,CILEK))
+        { tarif=true; yemek=GRANOLA; }
+        else if(Eslesiyor(m.secim1,m.secim2,BUGDAY,ELMA))
+        { tarif=true; yemek=ELMALI_TURTA; }
+        else if(Eslesiyor(m.secim1,m.secim2,BUGDAY,SALATALIK))
+        { tarif=true; yemek=SANDVIC; }
+        m.tarifBasarili=tarif; m.mesajSuresi=2.0f;
+        m.hazirlananYemek=yemek;
+        if(tarif)
         {
-            Azalt(o,m.secim1); Azalt(o,m.secim2); o.havucluKek++;
+            Azalt(o,m.secim1); Azalt(o,m.secim2);
+            if(yemek==HAVUCLU_KEK)o.havucluKek++;
+            else if(yemek==GRANOLA)o.granola++;
+            else if(yemek==ELMALI_TURTA)o.elmaliTurta++;
+            else o.sandvic++;
             m.parlamaSuresi=1.0f;
         }
         m.secim1=URUN_YOK; m.secim2=URUN_YOK;
@@ -128,13 +154,26 @@ void MutfagiCiz(const MutfakDurumu& m,const OyunDurumu& o,const MutfakGorselleri
         float a=(sinf(GetTime()*25)+1)*0.5f;
         // Parlama ve sonuc kasenin tam uzerinde belirir.
         DrawCircle(160*s,165*s,(18+8*a)*s,Fade(WHITE,0.75f));
-        DokuCiz(g.havucluKek,148,151,24,24,s);
+        float yemekBoyutu=m.hazirlananYemek==GRANOLA?32.0f:24.0f;
+        DokuCiz(YemekDokusu(g,m.hazirlananYemek),
+                160-yemekBoyutu/2.0f,163-yemekBoyutu/2.0f,
+                yemekBoyutu,yemekBoyutu,s);
     }
     if(m.mesajSuresi>0)
     {
         DrawRectangle(93*s,202*s,134*s,23*s,Fade(BLACK,0.72f));
-        DrawText(m.tarifBasarili?"HAVUCLU KEK HAZIR!":"BU TARIF OLMADI",105*s,209*s,7*s,WHITE);
+        const char* sonuc="TARIF HAZIR!";
+        if(m.tarifBasarili && m.hazirlananYemek==HAVUCLU_KEK)sonuc="HAVUCLU KEK HAZIR!";
+        else if(m.tarifBasarili && m.hazirlananYemek==GRANOLA)sonuc="GRANOLA HAZIR!";
+        else if(m.tarifBasarili && m.hazirlananYemek==ELMALI_TURTA)sonuc="ELMALI TURTA HAZIR!";
+        else if(m.tarifBasarili)sonuc="SANDVIC HAZIR!";
+        else sonuc="BU TARIF OLMADI";
+        DrawText(sonuc,105*s,209*s,7*s,WHITE);
     }
+    DrawText("BUGDAY+HAVUC: KEK",103*s,40*s,5*s,DARKBROWN);
+    DrawText("BUGDAY+CILEK: GRANOLA",91*s,47*s,5*s,DARKBROWN);
+    DrawText("BUGDAY+ELMA: TURTA",97*s,54*s,5*s,DARKBROWN);
+    DrawText("BUGDAY+SALATALIK: SANDVIC",77*s,61*s,5*s,DARKBROWN);
     DrawText("SAG/SOL: SEC  E: EKLE  SPACE: YAP  Q: TEMIZLE",22*s,224*s,5*s,DARKBROWN);
     DrawText("ILK MALZEMEDE SOL: TEZGAHA DON",69*s,232*s,5*s,DARKBROWN);
 }

@@ -10,6 +10,7 @@ constexpr int ENVANTER_KAPASITESI = 20;
 const Rectangle ENGELLER[] = {
     {55, 36, 83, 61}, {184, 36, 84, 61},
     {55, 141, 83, 60}, {184, 141, 84, 60},
+    // Orta kisim kapi gecisi icin acik birakilir.
     {0, 224, 135, 8}, {185, 224, 135, 8}
 };
 
@@ -137,9 +138,20 @@ void BahceyiGuncelle(BahceDurumu& b, OyunDurumu& oyun,
     BitkileriGuncelle(b.salataliklar, 6, dt);
     BitkileriGuncelle(b.elmalar, 3, dt);
 
+    // Kapinin onune gelince asagi tusu sahne gecisini tetikler.
+    if (IsKeyDown(KEY_DOWN) &&
+        b.karakterKonumu.x + KARAKTER_GENISLIGI * 0.5f >= 135 &&
+        b.karakterKonumu.x + KARAKTER_GENISLIGI * 0.5f <= 185 &&
+        // Oyuncu kapinin onune geldiginde, carpismaya takilmadan gec.
+        b.karakterKonumu.y >= 165.0f)
+    {
+        sahne = TEZGAH_SAHNESI;
+        return;
+    }
+
     Vector2 yeni = b.karakterKonumu;
     bool yuruyor = false;
-    const float hiz = 200.0f;
+    const float hiz = 70.0f;
     if (IsKeyDown(KEY_RIGHT)) { yeni.x += hiz*dt; b.yon=SAG; yuruyor=true; }
     else if (IsKeyDown(KEY_LEFT)) { yeni.x -= hiz*dt; b.yon=SOL; yuruyor=true; }
     else if (IsKeyDown(KEY_UP)) { yeni.y -= hiz*dt; b.yon=ARKA; yuruyor=true; }
@@ -172,11 +184,6 @@ void BahceyiGuncelle(BahceDurumu& b, OyunDurumu& oyun,
         return;
     }
 
-    if (merkez.x >= 135 && merkez.x <= 185 && b.karakterKonumu.y >= 169 && IsKeyDown(KEY_DOWN))
-    {
-        sahne = TEZGAH_SAHNESI;
-        return;
-    }
     UrunTuru tur = URUN_YOK;
     Bitki* alan = nullptr;
     int sayi = 0;

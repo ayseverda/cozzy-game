@@ -15,6 +15,22 @@ enum Yon
     SOL
 };
 
+enum MusteriTuru
+{
+    TAVSAN,
+    CAPYBARA,
+    KIRPI,
+    KURBAGA
+};
+
+enum YemekTuru
+{
+    HAVUCLU_KEK,
+    GRANOLA,
+    ELMALI_TURTA,
+    SANDVIC
+};
+
 enum UrunTuru
 {
     URUN_YOK,
@@ -33,6 +49,11 @@ struct OyunDurumu
     int salatalik = 0;
     int elma = 0;
     int havucluKek = 0;
+    int granola = 0;
+    int elmaliTurta = 0;
+    int sandvic = 0;
+
+    MusteriTuru musteri = TAVSAN;
 
     bool siparisAlindi = false;
     bool siparisTamamlandi = false;
@@ -42,6 +63,7 @@ struct OyunDurumu
 inline int ToplamEnvanter(const OyunDurumu& oyun)
 {
     return oyun.bugday + oyun.havuc + oyun.cilek +
-           oyun.salatalik + oyun.elma + oyun.havucluKek;
+           oyun.salatalik + oyun.elma + oyun.havucluKek + oyun.granola +
+           oyun.elmaliTurta + oyun.sandvic;
 }
 

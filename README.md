@@ -2,8 +2,7 @@
 
 Cozzy, oyuncunun bahçede malzeme topladığı, mutfakta tarif hazırladığı ve tezgahtaki hayvan müşterilere sipariş teslim ettiği piksel sanat tarzında bir oyundur. Oyun C++ ve raylib ile geliştirilmiştir.
 
-![Cozzy oyun ekranı](assets/cozzy.png)
-
+<img src="assets/cozzy.png" alt="Cozzy oyun ekranı" width="600">
 ## Özellikler
 
 - Bahçe, tezgâh ve mutfak arasında geçiş

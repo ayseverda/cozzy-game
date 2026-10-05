@@ -170,10 +170,5 @@ void MutfagiCiz(const MutfakDurumu& m,const OyunDurumu& o,const MutfakGorselleri
         else sonuc="BU TARIF OLMADI";
         DrawText(sonuc,105*s,209*s,7*s,WHITE);
     }
-    DrawText("BUGDAY+HAVUC: KEK",103*s,40*s,5*s,DARKBROWN);
-    DrawText("BUGDAY+CILEK: GRANOLA",91*s,47*s,5*s,DARKBROWN);
-    DrawText("BUGDAY+ELMA: TURTA",97*s,54*s,5*s,DARKBROWN);
-    DrawText("BUGDAY+SALATALIK: SANDVIC",77*s,61*s,5*s,DARKBROWN);
-    DrawText("SAG/SOL: SEC  E: EKLE  SPACE: YAP  Q: TEMIZLE",22*s,224*s,5*s,DARKBROWN);
-    DrawText("ILK MALZEMEDE SOL: TEZGAHA DON",69*s,232*s,5*s,DARKBROWN);
+
 }

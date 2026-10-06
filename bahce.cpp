@@ -111,6 +111,7 @@ void BahceyiBaslat(BahceDurumu& b)
     b.animasyonKaresi = 0;
     b.animasyonSayaci = 0;
     b.engelleriGoster = false;
+    b.ekimYapildi = false;
 
     const Vector2 solUst[6] = {{64,48},{88,48},{112,48},{64,76},{88,76},{112,76}};
     const Vector2 sagUst[6] = {{192,48},{216,48},{240,48},{192,76},{216,76},{240,76}};
@@ -132,6 +133,7 @@ void BahceyiBaslat(BahceDurumu& b)
 void BahceyiGuncelle(BahceDurumu& b, OyunDurumu& oyun,
                      Sahne& sahne, float dt)
 {
+    b.ekimYapildi = false;
     BitkileriGuncelle(b.bugdaylar, 6, dt);
     BitkileriGuncelle(b.havuclar, 6, dt);
     BitkileriGuncelle(b.cilekler, 6, dt);
@@ -204,7 +206,8 @@ void BahceyiGuncelle(BahceDurumu& b, OyunDurumu& oyun,
             if (tur==ELMA) oyun.elma++;
         }
     }
-    if (tur != URUN_YOK && tur != ELMA && IsKeyPressed(KEY_F)) BitkiEk(alan, sayi);
+    if (tur != URUN_YOK && tur != ELMA && IsKeyPressed(KEY_F))
+        b.ekimYapildi = BitkiEk(alan, sayi);
     if (IsKeyPressed(KEY_F1)) b.engelleriGoster = !b.engelleriGoster;
 }
 

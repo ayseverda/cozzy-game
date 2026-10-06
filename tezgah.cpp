@@ -10,6 +10,18 @@ YemekTuru SiparisYemegi(MusteriTuru m)
     return HAVUCLU_KEK;
 }
 
+MusteriTuru SonrakiMusteri(MusteriTuru musteri)
+{
+    switch(musteri)
+    {
+        case TAVSAN: return CAPYBARA;
+        case CAPYBARA: return KURBAGA;
+        case KURBAGA: return KIRPI;
+        case KIRPI: return TAVSAN;
+    }
+    return TAVSAN;
+}
+
 Texture2D YemekDokusu(const TezgahGorselleri& g,YemekTuru y)
 {
     if(y==GRANOLA)return g.granola;
@@ -178,7 +190,7 @@ void TezgahiGuncelle(
     }
     if(oyun.siparisTamamlandi && tezgah.mesajSuresi<=0.0f)
     {
-        oyun.musteri=static_cast<MusteriTuru>((oyun.musteri+1)%4);
+        oyun.musteri=SonrakiMusteri(oyun.musteri);
         oyun.siparisAlindi=false;
         oyun.siparisTamamlandi=false;
         tezgah.tavsanKaresi=0;

@@ -38,6 +38,7 @@ struct BahceDurumu
     int animasyonKaresi;
     float animasyonSayaci;
     bool engelleriGoster;
+    bool ekimYapildi;
 
     Bitki bugdaylar[6];
     Bitki havuclar[6];

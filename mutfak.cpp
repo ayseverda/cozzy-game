@@ -91,7 +91,7 @@ void MutfagiGuncelle(MutfakDurumu& m,OyunDurumu& o,Sahne& sahne,float dt)
             else if(yemek==GRANOLA)o.granola++;
             else if(yemek==ELMALI_TURTA)o.elmaliTurta++;
             else o.sandvic++;
-            m.parlamaSuresi=1.0f;
+            m.parlamaSuresi=2.4f;
         }
         m.secim1=URUN_YOK; m.secim2=URUN_YOK;
     }
@@ -120,44 +120,47 @@ void MutfagiCiz(const MutfakDurumu& m,const OyunDurumu& o,const MutfakGorselleri
         float boyut=(u==ELMA)?18.0f:20.0f;
         DokuCiz(doku,x,y,boyut,boyut,s,renk);
     }
-    // Urunu kapatmayan, yumusak yanip sonen piksel-kose secim cercevesi.
-    float imlecBoyutu=(URUNLER[m.imlec]==ELMA)?14.0f:16.0f;
-    int sx=(int)((yerler[m.imlec].x-4)*s);
-    int sy=(int)((yerler[m.imlec].y-4)*s);
-    int sw=(int)((imlecBoyutu+8)*s);
-    int kose=5*s;
-    int kalinlik=2*s;
-    float nabiz=0.65f+0.35f*(sinf((float)GetTime()*6.0f)+1.0f)/2.0f;
-    Color secimRengi=Fade(Color{255,92,151,255},nabiz);
-    DrawRectangle(sx,sy,kose,kalinlik,secimRengi);
-    DrawRectangle(sx,sy,kalinlik,kose,secimRengi);
-    DrawRectangle(sx+sw-kose,sy,kose,kalinlik,secimRengi);
-    DrawRectangle(sx+sw-kalinlik,sy,kalinlik,kose,secimRengi);
-    DrawRectangle(sx,sy+sw-kalinlik,kose,kalinlik,secimRengi);
-    DrawRectangle(sx,sy+sw-kose,kalinlik,kose,secimRengi);
-    DrawRectangle(sx+sw-kose,sy+sw-kalinlik,kose,kalinlik,secimRengi);
-    DrawRectangle(sx+sw-kalinlik,sy+sw-kose,kalinlik,kose,secimRengi);
+    // Elle cizilen koseler yerine yeni piksel cerceve dokusu.
+    DokuCiz(g.secimCercevesi,yerler[m.imlec].x-6,yerler[m.imlec].y-6,32,32,s);
 
-    // Secilen iki urun icin buyuk gri cubuk yerine iki kucuk pastel kutu.
-    Color kutu={255,247,225,235};
-    Color cerceve={105,75,62,255};
-    DrawRectangle(118*s,8*s,34*s,28*s,kutu);
-    DrawRectangleLines(118*s,8*s,34*s,28*s,cerceve);
-    DrawRectangle(168*s,8*s,34*s,28*s,kutu);
-    DrawRectangleLines(168*s,8*s,34*s,28*s,cerceve);
+    // kare.png atlasinin 5. kare cercevesi ve 2. arti hucreleri.
+    const Rectangle kareCercevesi={132,100,66,66};
+    const Rectangle artiIsareti={102,184,52,50};
+    DrawTexturePro(g.kareler,kareCercevesi,{119*s,6*s,32*s,32*s},{0,0},0,WHITE);
+    DrawTexturePro(g.kareler,kareCercevesi,{169*s,6*s,32*s,32*s},{0,0},0,WHITE);
+    DrawTexturePro(g.kareler,artiIsareti,{154*s,15*s,11*s,11*s},{0,0},0,WHITE);
     if(m.secim1!=URUN_YOK)DokuCiz(Doku(g,m.secim1),127,14,16,16,s);
-    DrawText("+",157*s,16*s,9*s,cerceve);
     if(m.secim2!=URUN_YOK)DokuCiz(Doku(g,m.secim2),177,14,16,16,s);
 
     if(m.parlamaSuresi>0)
     {
-        float a=(sinf(GetTime()*25)+1)*0.5f;
-        // Parlama ve sonuc kasenin tam uzerinde belirir.
-        DrawCircle(160*s,165*s,(18+8*a)*s,Fade(WHITE,0.75f));
-        float yemekBoyutu=m.hazirlananYemek==GRANOLA?32.0f:24.0f;
-        DokuCiz(YemekDokusu(g,m.hazirlananYemek),
-                160-yemekBoyutu/2.0f,163-yemekBoyutu/2.0f,
-                yemekBoyutu,yemekBoyutu,s);
+        // Sprite sayfasindaki butun efekt kareleri hizlica, sabit boyutta oynar.
+        const float animasyonToplami=2.4f;
+        float gecenSure=animasyonToplami-m.parlamaSuresi;
+        if(gecenSure<0.68f)
+        {
+            const Rectangle kareler[]={
+                {0,0,80,84},       // ilk pariltilar
+                {176,0,80,88},     // donen yildizlar
+                {0,88,82,80},      // pembe girdap
+                {88,88,82,80},     // isik halkasi
+                {184,96,70,62},    // ilk puff
+                {96,176,68,70}     // son puff
+            };
+            const float kareSuresi=0.68f/6.0f;
+            int kareNo=(int)(gecenSure/kareSuresi);
+            if(kareNo>5)kareNo=5;
+            const float boyut=48.0f;
+            Rectangle hedef={(160-boyut/2.0f)*s,(154-boyut/2.0f)*s,boyut*s,boyut*s};
+            DrawTexturePro(g.puff,kareler[kareNo],hedef,{0,0},0,WHITE);
+        }
+        else
+        {
+            float yemekBoyutu=m.hazirlananYemek==GRANOLA?32.0f:24.0f;
+            DokuCiz(YemekDokusu(g,m.hazirlananYemek),
+                    160-yemekBoyutu/2.0f,157-yemekBoyutu/2.0f,
+                    yemekBoyutu,yemekBoyutu,s);
+        }
     }
     if(m.mesajSuresi>0)
     {

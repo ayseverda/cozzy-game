@@ -1,16 +1,18 @@
-﻿# Cozzy
+# Cozzy
 
-Cozzy, oyuncunun bahçede malzeme topladığı, mutfakta tarif hazırladığı ve tezgahtaki hayvan müşterilere sipariş teslim ettiği piksel sanat tarzında bir oyundur. Oyun C++ ve raylib ile geliştirilmiştir.
+Cozzy, bahçesinde malzeme yetiştirdiğin, mutfağında tarifler hazırladığın ve küçük kafende hayvan müşterileri ağırladığın piksel sanat tarzında bir oyundur. C++ ve raylib ile geliştirilmiştir.
 
-<img src="assets/cozzy.png" alt="Kurbağalı ekran" width="300"> &nbsp;
-<img src="assets/bunny.png" alt="Tavşanlı ekran" width="300">
+<img src="assets/cozzy.png" alt="Cozzy oyun ekranı" width="300"> &nbsp;
+<img src="assets/bunny.png" alt="Tavşan müşteri" width="300">
+
 ## Özellikler
 
 - Bahçe, tezgâh ve mutfak arasında geçiş
-- Tavşan, kapibara, kirpi ve kurbağaya sipariş hazırlama
-- Malzeme toplama ve envanter yönetimi
-- Tarif birleştirme ve teslim tepkileri
-- Toplama, yemek hazırlama ve teslim için ses efektleri
+- Ürün ekme, toplama ve envanter yönetimi
+- Malzemelerle tarif hazırlama ve hayvan müşterilere servis yapma
+- Her servis için 10 bağ puanı kazanma
+- Bağ puanı arttıkça açılan, hikâye ve görseller içeren anı defteri
+- Mutfakta tarif kitabı ve sahneye göre değişen ses efektleri
 
 ## Tarifler
 
@@ -25,54 +27,49 @@ Cozzy, oyuncunun bahçede malzeme topladığı, mutfakta tarif hazırladığı v
 
 | Tuş | İşlev |
 |---|---|
-| `E` | Sipariş al, malzeme topla, malzeme seç veya yemeği teslim et |
-| `Sol` / `Sağ` | Tezgâhta sahne değiştir; mutfakta malzeme seç |
-| `Space` | Seçilen malzemelerle tarif hazırla |
-| `Q` | Mutfak malzeme seçimlerini temizle |
+| Ok tuşları | Bahçede hareket; tezgâhta sahne değiştirme; mutfakta malzeme seçme |
+| `E` | Ürün topla, malzeme seç, sipariş al veya hazır yemeği teslim et |
+| `F` | Bahçede seçili boş alana ürün ek |
+| `Space` | Seçilen iki malzemeyle tarif hazırla |
+| `Q` | Mutfaktaki malzeme seçimlerini temizle |
 | `B` | Mutfaktan tezgâha dön |
-| `F` | Bahçede boş yere yeniden ek |
 | `I` | Envanteri aç/kapat |
-| `J` | Tezgâhtaki boş kitabı aç/kapat |
+| `J` | Mutfakta tarif kitabını, diğer sahnelerde anı defterini aç/kapat |
+| `Sol` / `Sağ` veya fare tekerleği | Açık kitapta sayfa çevir |
 | `Esc` | Açık kitabı kapat |
-| `F1` | Bahçe engel kutularını göster/kapat |
-| `F3` | Toplama sesini dinle |
-| `F4` | Yemek hazırlama sesini dinle |
-| `F5` | Teslim sesini dinle |
 
-Sipariş sırası tavşan, kapibara, kirpi ve kurbağadır. Bir sipariş teslim edildikten sonra tezgahtaki yeni müşteriden `E` ile siparişi al.
+Sipariş sırası tavşan, kapibara, kurbağa ve kirpidir. Tezgahta `E` ile siparişi al; uygun yemeği hazırladıktan sonra tekrar `E` ile teslim et. Her tamamlanan servis 10 bağ puanı kazandırır. Anı defterinin ilk sayfası oyun başında açıktır; sonraki sayfalar her 10 puanda bir açılır.
 
 ## Derleme ve çalıştırma
 
-Gerekenler: CMake 3.15 veya üstü, C++11 destekli bir derleyici ve ilk yapılandırmada raylib kaynağını indirmek için internet bağlantısı.
-
-Proje kök klasöründe PowerShell veya terminal açıp çalıştır:
+Gerekenler: CMake 3.15 veya üstü, C++11 destekli bir derleyici ve raylib kaynağını indirmek için internet bağlantısı. Windows'ta MSYS2 UCRT64 derleyicisi kullanılıyorsa, derlemeden önce derleyici araçlarını `PATH`'e ekle:
 
 ```powershell
+$env:PATH = "C:\msys64\ucrt64\bin;$env:PATH"
 cmake -S . -B build
 cmake --build build
 .\build\cozzy.exe
 ```
 
-Oyunu proje kök klasöründen başlat; görseller ve sesler `assets/` altındaki göreli yollarla yüklenir. CMake, raylib 5.5'i ilk yapılandırmada otomatik indirip derleme için hazırlar.
+CMake, raylib 5.5'i ilk yapılandırmada indirip derlemeye hazırlar. Oyunu `assets/` klasörünün bulunduğu proje kökünden çalıştır; paketlenmiş sürümde de `assets/` klasörü exe ile aynı klasörde bulunmalıdır.
+
+## Anı defteri hikâyelerini düzenleme
+
+Hikâyeler `assets/hikayeler.txt` dosyasındadır. UTF-8 destekleyen bir metin düzenleyici kullan. Her `[PAGE n]` bölümü bir defter sayfasını belirtir; `TITLE:` başlığı, `LEFT:` fotoğraf altı metnini, `RIGHT:` devam metnini belirler. Sayfa numaralarını ve alan etiketlerini koru. Fotoğraf sırası `main.cpp` içindeki `DEFTER_FOTO_YOLLARI` dizisinde tutulur.
 
 ## Proje yapısı
 
 ```text
-assets/          Oyun görselleri ve sesleri; kitap için kitap_tezgah.png ve open_book.png
-assets/sesler/   WAV efektleri ve pop/hihi seslerini üreten Python betiği
-main.cpp         Oyun döngüsü, kaynak yükleme ve ses tetikleme
-bahce.cpp/.h     Bahçe sahnesi ve hareket/toplama
-tezgah.cpp/.h    Tezgâh sahnesi, müşteriler ve teslim
+assets/          Oyun görselleri, fontlar, sesler ve hikâye dosyası
+main.cpp         Oyun döngüsü, kitaplar, bağ puanı ve ses tetikleme
+bahce.cpp/.h     Bahçe sahnesi, hareket, ekim ve ürün toplama
+tezgah.cpp/.h    Müşteriler, siparişler ve teslim
 mutfak.cpp/.h    Mutfak sahnesi ve tarif hazırlama
 oyun_verileri.h  Sahne, müşteri, yemek ve envanter verileri
-KULLANIM.txt     Tuşlar ve kısa oyun rehberi
+KULLANIM.txt     Kontroller ve kısa kullanım rehberi
 CMakeLists.txt   CMake yapılandırması
 ```
 
-## Ses dosyaları
+## Windows demosunu paketleme
 
-- Bahçede ürün toplama: `assets/sesler/pop_yeni.wav`
-- Tarif hazırlama: `assets/sesler/hihi_yeni.wav`
-- Sipariş teslimi: `assets/sesler/classic_diririm.wav`
-
-Bu efektler buzzerı taklit eden tek perdeli kısa bip ritimleridir. `assets/sesler/olustur.py` standart Python ile üçünü de yeniden üretir; ek paket gerekmez. Aktif buzzerla donanımda aynı ritimleri aç/kapa darbeleriyle çalabiliriz, WAV dosyasının kendisini buzzer çalamaz.
+Oyunculara dağıtmak için `cozzy.exe`, `assets/` klasörü ve derleyicinin ihtiyaç duyduğu çalışma zamanı DLL'lerini aynı klasöre koyup ZIP olarak paketle. Kaynak kodu derlemek için MSYS2 UCRT64 ortamı gerekir; oyuncuların CMake kurması gerekmez.

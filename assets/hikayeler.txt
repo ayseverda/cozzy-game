@@ -1,0 +1,172 @@
+# Cozzy anı defteri hikâyeleri — UTF-8
+# Sayfa sırası main.cpp içindeki DEFTER_FOTO_YOLLARI sırasıyla aynıdır.
+# TITLE başlıktır; LEFT fotoğrafın altındaki metindir; RIGHT devam metnidir.
+# Metinleri değiştirebilir, paragraflar arasında boş satır bırakabilirsin.
+
+[PAGE 1]
+TITLE: Kafedeki ilk günü
+LEFT:
+Kafeyi açar açmaz tavşan geldi! Meğer uzun zamandır açılmasını bekliyormuş. İçeri girer girmez masalara, mutfağa ve bahçedeki havuçlara göz attı.
+RIGHT:
+Gün boyunca koşturdu, çiçeklere baktı, mutfağa gelip ne hazırladığımı sordu. Sanırım tanıştığım en enerjik müşterimdi.
+
+[PAGE 2]
+TITLE: Küçük bir ikram
+LEFT:
+Akşama doğru Capy uğradı. Elinde kendi yaptığı kurabiyelerden bir kutu vardı. Bana da tattırmak için getirmiş.
+RIGHT:
+Bir tane yedim ve çok beğendim. Capy ne diyeceğimi beklerken biraz gerilmişti. “Çok güzel olmuş,” deyince yüzü aydınlandı. Sanırım fikrimi gerçekten merak ediyordu.
+
+[PAGE 3]
+TITLE: Kapanmaya doğru
+LEFT:
+Kapanmaya yakın kurbağa geldi. Kafenin önünde biraz bekledikten sonra içeri girip sessizce çayını istedi.
+RIGHT:
+Çok konuşmadık. Gitmeden önce yarın da açık olup olmayacağımızı sordu. “Tabii ki,” dedim. Birkaç kez daha sormak istedi ama vazgeçti. Biraz çekingen biri galiba.
+
+[PAGE 4]
+TITLE: Köşedeki masa
+LEFT:
+Öğleden sonra kirpi geldi. Kapının önünde biraz beklediğini gördüm. İçeri girince en köşedeki masayı seçti. Çayını içerken etrafı
+RIGHT:
+sessizce izledi. “Oturmam sorun olur mu?” diye sordu. “Tabii ki olmaz,” dedim. Bunu birkaç kez daha söylemem gerekti. Neden bu kadar kaygılı olduğunu o zaman anlayamamıştım.
+
+[PAGE 5]
+TITLE: Capy ile tanıştılar
+LEFT:
+Öğlene doğru Capy geldi. Tavşan onu görür görmez yanına koşup daha önce hiç görmediği tatlılardan tattırdı.
+RIGHT:
+Capy de peşinden sakince dolaştı. Tavşan durmadan anlatırken sadece gülümsüyordu. Bir ara tavşan nefes nefese kaldı. Capy ona kurabiyelerinden birini uzattı. “Biraz oturup yiyelim mi?” dedi. Tavşan sonunda yanına oturdu. İkisini birlikte izlemek hoşuma gitti.
+
+[PAGE 6]
+TITLE: Kurabiyeleri yeniden denedi
+LEFT:
+Capy yine kendi yaptığı kurabiyelerden getirdi. Süslemeleri tek tek inceleyip hangisinin daha güzel olduğuna karar vermeye çalışıyordu.
+RIGHT:
+Bir tanesinin kenarı fazla pişmişti. “Bunu getirmesem daha iyi olurdu,” dedi. Tadına baktım; yine de çok güzeldi. Bir süre düşündü. “O zaman bir dahaki sefere daha güzelini yaparım.” Sanırım Capy, bir şeyi beğense bile biraz daha düzeltmeden rahat edemiyor.
+
+[PAGE 7]
+TITLE: Küçük bir sohbet
+LEFT:
+Kurbağa yine geldi. Çayını aldıktan sonra uzun süre masada oturdu. Bir şey söyleyecek gibi yanıma geldi ama vazgeçti.
+RIGHT:
+Sonunda cesaret edip, “Bugün hava güzel, değil mi?” dedi. “Evet,” dedim. Birkaç saniye sustu ve yerine döndü. Yanına gidip neden bu kadar düşündüğünü sordum. “Bunu söylemem garip oldu mu?” dedi. Sanırım onun kafasında bazı şeyler benim düşündüğümden çok daha uzun sürüyor.
+
+[PAGE 8]
+TITLE: Dikenlerini kapattı
+LEFT:
+Kirpi erken geldi. Kendi köşesine oturdu ama bu kez çok sessizdi. Yan masadan birinin ona baktığını fark edince dikenlerini eliyle kapatmaya çalıştı.
+RIGHT:
+“Bir şey mi oldu?” diye sordum. “Yok... Bana bakıyordu.” “Belki sadece seni görmüştür.” Biraz düşündü. “Dikenlerime bakıyordu.” Sonra çayına döndü. Müşteri aslında pencereden dışarıyı izliyordu. Bunu kirpiye söylemedim.
+
+[PAGE 9]
+TITLE: Dinlenmeyi unuttu
+LEFT:
+Tavşanın yine eli ayağı durmadı. Önce bahçede yardım etti, sonra mutfağa geçti.
+RIGHT:
+“Biraz dinlenmek ister misin?” diye sordum. “Yok yok, daha yapacaklarım var!” dedi. Akşam her işi bitirmişti ama kendisi neredeyse hiç yememişti. Önüne bir tabak hazırladım. “Bugün biraz da kendine yetiş,” dedim.
+
+[PAGE 10]
+TITLE: Başlamadan önce bitirmek
+LEFT:
+Capy yeni bir tarif denemek istedi. Masaya bir sürü malzeme koydu ve tarif defterini açtı. Sonra uzun süre hiçbir şey yapmadı.
+RIGHT:
+“Bir sorun mu var?” diye sordum. “Ya güzel olmazsa?” Biraz düşündükten sonra tarifi kapattı. “Başlamazsam kötü de olmaz,” dedi. Şaka yapıyormuş gibi gülümsedi ama pek öyle görünmüyordu.
+
+[PAGE 11]
+TITLE: Ya yanlış yaparsam?
+LEFT:
+Kurbağa menüye uzun uzun baktı. Her zamanki çayı yerine sıcak çikolata istedi; sonra siparişini değiştirmek istedi ve yeniden çay söyledi.
+RIGHT:
+“Çay olsun. Zaten onu seviyorum,” dedi. “Sıcak çikolata istiyordun,” dedim. “Evet ama ya sonra pişman olursam?” “Pişman olursan bir dahaki sefere çikolata söylersin.” Bunu da düşündü. “Mantıklı,” dedi ve çayını içmeye devam etti.
+
+[PAGE 12]
+TITLE: Yanlış anlamıştı
+LEFT:
+Kirpiyle tavşan aynı anda geldi. Tavşan koştururken kirpinin yanından geçti ve durdu. “Dikenlerin çok güzelmiş! Biraz çiçek gibi,” dedi.
+RIGHT:
+Kirpi ne diyeceğini bilemedi. “Gerçekten mi?” Tavşan gülümseyip koşarak uzaklaştı. Kirpi arkasından baktı. “Dalga geçmedi, değil mi?” diye sordu. “Hayır.” Bir süre sessiz kaldı. “Ben öyle sandım,” dedi.
+
+[PAGE 13]
+TITLE: Kendini de unutmuştu
+LEFT:
+Tavşanla kirpi aynı anda geldi. Tavşan yine bir şeyler yapmaya çalışırken kirpi köşede sessizce çayını içiyordu.
+RIGHT:
+Tavşan yanına oturdu; ilk kez uzun süre hiçbir yere koşmadı. Kirpi, “Bugün çok yorulmuşsun,” dedi. Tavşan gülüp geçmeye çalıştı ama başını masaya koydu. “Birazcık,” dedi. Pek konuşmadılar. Tavşan kalkarken yüzü biraz daha rahat görünüyordu.
+
+[PAGE 14]
+TITLE: Birlikte denemek
+LEFT:
+Tavşan bugün Capy'nin yanına oturdu. Capy tarif defterine bakıyordu ama hâlâ başlamamıştı. “Ne yapıyoruz?” diye sordu tavşan.
+RIGHT:
+“Hiç. Daha karar veremedim.” Tavşan malzemelere baktı. “O zaman birlikte deneyelim!” Capy tereddüt etti: “Ya kötü olursa?” “O zaman başka bir şey deneriz.” Birlikte mutfağa girdiler. Tarif pek tutmadı ama Capy'nin yüzünde uzun zamandır görmediğim bir gülümseme vardı.
+
+[PAGE 15]
+TITLE: Sessiz kalmak da güzel
+LEFT:
+Kurbağa ve kirpi aynı masaya oturup sessizce çay içtiler. Kirpi, “Sence fazla mı sessiziz?” diye sordu.
+RIGHT:
+“Ben de onu düşünüyordum,” dedi kurbağa. Bir süre sonra, “Acaba birbirimizi rahatsız ediyor muyuz?” diye sordu. “Bilmiyorum. Ama ikimiz de kalkmıyorsak herhalde sorun yoktur,” dedi kirpi. Gülümsediler ve konuşmadan çaylarını içmeye devam ettiler. Bazen düşünceleri susturmak gerekmez; yanında onları düşünecek birinin olması yeter.
+
+[PAGE 16]
+TITLE: Yanına otururlar mı?
+LEFT:
+Kirpi, “Sence insanlar benimle oturmak istemiyor olabilir mi?” diye sordu. Yanına otururken dikenlerinden korktuklarını düşünüyordu.
+RIGHT:
+Capy geldi ve hiç düşünmeden kirpinin yanındaki sandalyeye oturdu. “Bugün ne içiyorsun?” diye sordu. Çaylarını alıp sohbete başladılar. Capy'nin dikenlerden haberi bile yokmuş gibi görünüyordu. Belki de kimse onları kirpinin düşündüğü kadar önemsemiyordu.
+
+[PAGE 17]
+TITLE: Herkese yetişemedi
+LEFT:
+Tavşan sabah yine herkese yardım etmek istedi ama bir süre sonra yaptığı işi yarım bırakıp durdu. “İyi misin?” diye sordum.
+RIGHT:
+“İyiyim,” dedi. Sonra düşündü: “Sadece bugün herkese yetişemedim.” Kurbağa yanına oturup onu dinledi. “Bugün hiçbirini yapmak zorunda değildin belki,” dedi. Tavşan bir süre sessiz kaldı. Sonra ilk kez, “Belki,” diye karşılık verdi.
+
+[PAGE 18]
+TITLE: Biraz ara verdi
+LEFT:
+Capy'yi mutfakta tek başına buldum. Masada aynı kurabiyeden onlarca tane vardı. Birini yapıyor, beğenmiyor, yeniden deniyordu.
+RIGHT:
+“Neden hâlâ uğraşıyorsun?” diye sordum. “Olmadı.” “Bence gayet güzel.” Başını salladı. “Ama benim istediğim gibi değil.” Bir süre sonra çok yorulduğunu söyledi ve ilk kez kurabiyelere bakmadan sandalyeye oturdu. “Galiba biraz bırakmam gerekiyor.”
+
+[PAGE 19]
+TITLE: Ya bir şey ters giderse?
+LEFT:
+Kurbağa gelir gelmez yarın yağmur yağıp yağmayacağını sordu. “Yağarsa bahçe zarar görür mü? Peki çok yağarsa?” diye devam etti.
+RIGHT:
+“Ya çatı da akarsa? Ya yetişemezsek?” diye sordu. “Onu da tamir ederiz. O zaman yarın düşünürüz,” dedim. Kurbağa çayından bir yudum aldı. “Yarın düşünmek daha kolaymış.” Sonra ilk kez konuyu değiştirdi.
+
+[PAGE 20]
+TITLE: Üç kişi gülümsemişti
+LEFT:
+Kirpi bahçede bir çocuğun kendisine baktığını söyledi. “Bir şey yaptı mı?” “Hiçbir şey.” “Bir şey söyledi mi?” “Hayır.” “O zaman?”
+RIGHT:
+“Beni sevmediğini düşündüm,” dedi. Bugün hakkında bir şey söyleyen kaç kişi olduğunu sordum. “Hiç kimse.” Peki gülümseyen kaç kişi? Bu kez daha uzun düşündü. “Üç kişi.” Başını kaldırdı. “Ben sadece bana bakanları hatırlıyorum.”
+
+[PAGE 21]
+TITLE: Biraz durabilmek
+LEFT:
+Tavşan yine erkenden geldi. Bu kez bütün kafeyi dolaşmak yerine yanıma gelip bahçedeki banka oturdu. “Bugün ne yapıyoruz?” diye sordum.
+RIGHT:
+“Hiçbir şey,” dedi. Bir süre bahçeyi izledik. Capy, kirpi ve kurbağa da yanımıza geldi. Tavşan yardım etmek için ayağa kalkmadı. Bizimle oturdu, sohbet etti ve kurabiyesini yedi. Sanırım ilk kez bir yere yetişmeye çalışmadan da güzel bir gün geçirdi.
+
+[PAGE 22]
+TITLE: Kusurlu kurabiyeler
+LEFT:
+Capy yine kurabiye yaptı. Bu kez birkaçının şekli farklıydı; birinin kreması yana kaymıştı. “Bunları düzeltecek misin?” diye sordum.
+RIGHT:
+Bir süre kurabiyelere baktı. “Hayır.” “Emin misin?” Gülümsedi: “Biraz kötü olmaları da sorun değilmiş.” Tavşan mutfaktan koşup geldi, bir tane yedi ve “Çok güzel!” dedi. Capy bu kez “Gerçekten mi?” diye sormadı. Sadece gülümsedi.
+
+[PAGE 23]
+TITLE: Biraz bırakmak
+LEFT:
+Kurbağa pencerenin yanında oturdu. “Bir şey sorabilir miyim?” dedi. “Tabii.” “Sence...” Durdu. “Boş ver.”
+RIGHT:
+Biraz düşündü ve gülümsedi: “Aslında önemli değil.” Bahçeye çıktık. Tavşan koşturuyor, Capy bir şeyler hazırlıyor, kirpi bankta oturuyordu. “Sence herkes iyi mi?” “Bence evet.” “Ya değilse?” Kurbağa gülümsedi. “Gerekirse söylerler.” Sonra hiçbir şey sormadan yanımıza oturdu.
+
+[PAGE 24]
+TITLE: Dikenlerini saklamadan
+LEFT:
+Kirpi bahçede oturuyordu. Bir süre sonra tavşan, Capy ve kurbağa da geldi. Hepimiz aynı masaya oturduk. Kirpi sessizce dikenlerine baktı.
+RIGHT:
+“Eskiden herkesin önce dikenlerimi gördüğünü sanıyordum.” Biraz düşündü. “Belki de önce beni görüyorlardır.” Tavşan önüne bir kurabiye bıraktı. Kirpi güldü. Sonra hep birlikte bahçede oturduk. Bugün ilk kez dikenlerini saklamaya çalışmadı.

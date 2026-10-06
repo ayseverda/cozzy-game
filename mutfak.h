@@ -15,6 +15,9 @@ struct MutfakGorselleri
     Texture2D granola;
     Texture2D elmaliTurta;
     Texture2D sandvic;
+    Texture2D secimCercevesi;
+    Texture2D puff;
+    Texture2D kareler;
 };
 
 struct MutfakDurumu

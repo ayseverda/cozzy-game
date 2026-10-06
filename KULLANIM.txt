@@ -1,30 +1,60 @@
-COZZY - HAYVANLARIN SIPARISLERI
+COZZY - KULLANIM REHBERI
+=======================
 
-E         Siparis al / urun topla / teslim et / mutfakta malzeme sec
-F         Bahcede bos yere yeniden ek
-B         Mutfaktan tezgaha don (yedek tus)
-Sol-Sag   Tezgahta Sol ile bahceye, Sag ile mutfaga gec
-I         Envanteri ac/kapat
-Sag-Sol   Mutfakta malzeme sec; ilk malzemedeyken Sol ile tezgaha don
-SPACE     Secilen iki malzemeyi birlestir
-Q         Mutfak secimlerini temizle
-F1        Bahce engel kutularini goster/gizle
-J         Tezgahtaki bos kitabi ac/kapat
-ESC       Acik kitabi kapat
+KONTROLLER
+----------
+Ok tuslari       Bahcede hareket et.
+E                Bahcede urun topla; mutfakta malzeme sec;
+                 tezgahta siparis al veya hazir yemegi teslim et.
+F                Bahcede secili bos alana urun ek.
+Sol / Sag        Tezgahta bahce ve mutfak arasinda gecis yap.
+                 Mutfakta malzeme sec; ilk malzemedeyken Sol ile
+                 tezgaha don.
+SPACE            Secilen iki malzemeyle tarif hazirla.
+Q                Mutfaktaki malzeme secimlerini temizle.
+B                Mutfaktan tezgaha don.
+I                Envanteri ac/kapat.
+J                Mutfakta tarif kitabini, diger sahnelerde ani defterini ac.
+Sol / Sag veya
+fare tekerlegi   Acik kitapta sayfa cevir.
+ESC              Acik kitabi kapat.
+F1               Bahce engel kutularini goster/gizle.
 
-Siparis sirasi: Tavsan, kapibara, kirpi, kurbaga. Her teslimden sonra
-tezgahta gorunen hayvanin E ile siparisini alip devam et.
+SIPARIS DONGUSU
+---------------
+Tezgahta E ile siparisi al. Istenen tarifi mutfakta hazirla, sonra
+tezgaha donup E ile teslim et. Musteri sirasi tavsan, kapibara, kurbaga,
+kirpi seklindedir. Her tamamlanan servis 10 bag puani kazandirir.
 
-Tarifler (malzemeleri mutfakta secip SPACE'e bas):
+TARIFLER
+--------
 Bugday + havuc       = havuclu kek (tavsan)
 Bugday + cilek       = granola (kapibara)
 Bugday + elma        = elmali turta (kirpi)
 Bugday + salatalik   = sandvic (kurbaga)
 
-Malzemeleri bahceden E ile topla. Hazir yemegi tezgaha getirip E ile teslim et.
+MALZEME EKME VE TOPLAMA
+-----------------------
+Bahcede ok tuslariyla dolas. E ile secili urunu topla. F ile secili bos
+ekim alanina urun ek. Toplanan malzemeler envantere eklenir.
 
-Ses deneme tuslari:
-F3        Toplama bipleri (pop_yeni.wav)
-F4        Yemek hazirlama ritmi (hihi_yeni.wav)
-F5        Teslim ritmi (classic_diririm.wav)
+KITAPLAR VE BAG PUANI
+---------------------
+J tusu mutfakta tarif kitabini, diger sahnelerde ani defterini acar.
+Ani defteri 0 bag puaninda ilk sayfayla baslar. Her 10 puanda bir yeni
+sayfa acilir; her servis 10 puan kazandirir. Acik kitabi Sol/Sag tuslari
+veya fare tekerlegiyle cevir, ESC ile kapat.
 
+ANILARI DUZENLEME
+----------------
+Hikayeler assets/hikayeler.txt dosyasindadir. Dosyayi UTF-8 destekleyen
+bir metin duzenleyiciyle ac. [PAGE n] bolumu sayfa numarasidir. TITLE:
+basligi, LEFT: sol sayfanin fotograf altindaki metnini, RIGHT: devam
+metnini belirtir. Sayfa numaralarini ve TITLE/LEFT/RIGHT etiketlerini
+koru. Fotograf sirasi main.cpp icindeki DEFTER_FOTO_YOLLARI dizisindedir.
+
+WINDOWS DEMOSUNU CALISTIRMA
+--------------------------
+ZIP dosyasini bir klasore cikart. cozzy.exe, assets klasoru ve yanindaki
+DLL dosyalari ayni klasorde kalmalidir. Oyunu cozzy.exe dosyasini acarak
+baslat. Oyun dosyalarini assets klasorunden goreli yollarla yukler.

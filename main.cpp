@@ -1,37 +1,169 @@
-﻿#include "raylib.h"
+#include "raylib.h"
 #include "bahce.h"
 #include "tezgah.h"
 #include "mutfak.h"
+#include <cstdlib>
+#include <fstream>
+#include <string>
+#include <vector>
 
 namespace
 {
+const float DEFTER_ZOOM=1.20f;
+const float DEFTER_ICERIK_ZOOM=1.05f;
+const float DEFTER_SATIR_YUKSEKLIGI=6.1f*DEFTER_ICERIK_ZOOM;
+const int DEFTER_SAYFA_SAYISI=25;
+const bool DEFTER_ONIZLEME=false;
+struct DefterHikayesi
+{
+    std::string baslik;
+    std::string sol;
+    std::string sag;
+};
+
+const char* DEFTER_FOTO_YOLLARI[DEFTER_SAYFA_SAYISI][2]={
+    {"assets/karakter1.png","assets/karakter2.png"},
+    {"assets/tavsan1.png","assets/tavsan2.png"},
+    {"assets/capy1.png","assets/capy2.png"},
+    {"assets/kurba1.png","assets/kurba2.png"},
+    {"assets/kirpi1.png","assets/kirpi2.png"},
+    {"assets/tavsan3.png",nullptr},
+    {"assets/capy3.png",nullptr},
+    {"assets/kurba3.png",nullptr},
+    {"assets/kirpi3.png",nullptr},
+    {"assets/tavsan4.png",nullptr},
+    {"assets/capy4.png",nullptr},
+    {"assets/kurba4.png",nullptr},
+    {"assets/kirpi4.png",nullptr},
+    {"assets/tavsan5.png",nullptr},
+    {"assets/capy5.png",nullptr},
+    {"assets/kurba5.png",nullptr},
+    {"assets/kirpi5.png",nullptr},
+    {"assets/tavsan6.png",nullptr},
+    {"assets/capy6.png",nullptr},
+    {"assets/kurba6.png",nullptr},
+    {"assets/kirpi6.png",nullptr},
+    {"assets/tavsan7.png",nullptr},
+    {"assets/capy7.png",nullptr},
+    {"assets/kurba7.png",nullptr},
+    {"assets/kirpi7.png",nullptr}
+};
+
+bool DefterHikayeleriniYukle(DefterHikayesi hikayeler[DEFTER_SAYFA_SAYISI])
+{
+    std::ifstream dosya("assets/hikayeler.txt",std::ios::binary);
+    if(!dosya)return false;
+
+    DefterHikayesi* aktifSayfa=nullptr;
+    std::string* aktifAlan=nullptr;
+    std::string satir;
+    bool ilkSatir=true;
+    while(std::getline(dosya,satir))
+    {
+        if(ilkSatir && satir.size()>=3 &&
+           (unsigned char)satir[0]==0xEF &&
+           (unsigned char)satir[1]==0xBB &&
+           (unsigned char)satir[2]==0xBF)
+            satir.erase(0,3);
+        ilkSatir=false;
+        if(!satir.empty() && satir.back()=='\r')satir.pop_back();
+
+        if(satir.rfind("[PAGE ",0)==0)
+        {
+            const int sayfa=std::atoi(satir.c_str()+6);
+            aktifSayfa=(sayfa>=0 && sayfa<DEFTER_SAYFA_SAYISI)
+                ?&hikayeler[sayfa]:nullptr;
+            aktifAlan=nullptr;
+            continue;
+        }
+        if(!aktifSayfa)continue;
+        if(!satir.empty() && satir[0]=='#')continue;
+        if(satir.empty())
+        {
+            if(aktifAlan && !aktifAlan->empty() && aktifAlan->back()!='\n')
+                *aktifAlan+='\n';
+            continue;
+        }
+        if(satir.rfind("TITLE:",0)==0)
+        {
+            aktifSayfa->baslik=satir.substr(6);
+            if(!aktifSayfa->baslik.empty() && aktifSayfa->baslik[0]==' ')
+                aktifSayfa->baslik.erase(0,1);
+            aktifAlan=nullptr;
+        }
+        else if(satir=="LEFT:")aktifAlan=&aktifSayfa->sol;
+        else if(satir=="RIGHT:")aktifAlan=&aktifSayfa->sag;
+        else if(aktifAlan)
+        {
+            if(!aktifAlan->empty())*aktifAlan+='\n';
+            *aktifAlan+=satir;
+        }
+    }
+    return true;
+}
+
+const char* ANA_KARAKTER_NOTLARI[2]={
+    "Bazen insan, nereye gitmek istediğini bilmeden yola çıkar. Birkaç eşyam, az param ve cesaretimle geldim. Bahçe yabani otlarla doluydu; evin çatısı akıyordu.",
+    "Ve nedense... İlk kez hiçbir yere yetişmem gerekmiyormuş gibi hissettim. O gün yerleştim. Ne kadar kalırım bilmiyorum. Şimdilik burası benim."
+};
+
 struct OyunSesleri
 {
     Sound meyveToplama;
+    Sound ekme;
     Sound yemekHazir;
-    Sound musteriMutlu;
+    Sound siparisTeslim[4];
     Sound sayfaCevirme;
+    Sound musteriKonusma[4];
+    Music yurume;
 };
 
 void SesleriYukle(OyunSesleri& s)
 {
     s.meyveToplama=LoadSound("assets/sesler/pop_hizli.wav");
+    s.ekme={0};
+    Wave ekmeDalgasi=LoadWave("assets/sesler/ekme.wav");
+    if(IsWaveValid(ekmeDalgasi))
+    {
+        WaveCrop(&ekmeDalgasi,0,(int)(ekmeDalgasi.sampleRate*0.38f));
+        s.ekme=LoadSoundFromWave(ekmeDalgasi);
+        UnloadWave(ekmeDalgasi);
+    }
     s.yemekHazir=LoadSound("assets/sesler/yemek.wav");
-    s.musteriMutlu=LoadSound("assets/sesler/hihi_yeni.wav");
+    s.siparisTeslim[TAVSAN]=LoadSound("assets/sesler/tavsan-thanku.wav");
+    s.siparisTeslim[CAPYBARA]=LoadSound("assets/sesler/capy-thanku.wav");
+    s.siparisTeslim[KIRPI]=LoadSound("assets/sesler/kirpi-thanku.wav");
+    s.siparisTeslim[KURBAGA]=LoadSound("assets/sesler/kurba-thanku.wav");
     s.sayfaCevirme=LoadSound("assets/sesler/page.wav");
+    s.musteriKonusma[TAVSAN]=LoadSound("assets/sesler/tavsan_talk_kisa.wav");
+    s.musteriKonusma[CAPYBARA]=LoadSound("assets/sesler/capy_talk_kisa.wav");
+    s.musteriKonusma[KIRPI]=LoadSound("assets/sesler/kirpi_talk_kisa.wav");
+    s.musteriKonusma[KURBAGA]=LoadSound("assets/sesler/frog_talk_kisa.wav");
+    s.yurume=LoadMusicStream("assets/sesler/walk_kisik.wav");
+    s.yurume.looping=true;
+    SetMusicVolume(s.yurume,0.28f);
 
     TraceLog(LOG_INFO,"Ses dosyalari: toplama=%s, yemek=%s, teslim=%s",
              IsSoundValid(s.meyveToplama)?"OK":"YUKLENEMEDI",
              IsSoundValid(s.yemekHazir)?"OK":"YUKLENEMEDI",
-             IsSoundValid(s.musteriMutlu)?"OK":"YUKLENEMEDI");
+             IsSoundValid(s.siparisTeslim[TAVSAN])?"OK":"YUKLENEMEDI");
 }
 
 void SesleriKapat(OyunSesleri& s)
 {
     UnloadSound(s.meyveToplama);
+    if(IsSoundValid(s.ekme))UnloadSound(s.ekme);
     UnloadSound(s.yemekHazir);
-    UnloadSound(s.musteriMutlu);
+    for(Sound& teslim:s.siparisTeslim)UnloadSound(teslim);
     UnloadSound(s.sayfaCevirme);
+    for(Sound& konusma:s.musteriKonusma)UnloadSound(konusma);
+    UnloadMusicStream(s.yurume);
+}
+
+void KonusmalariDurdur(const OyunSesleri& s)
+{
+    for(const Sound& konusma:s.musteriKonusma)
+        if(IsSoundValid(konusma))StopSound(konusma);
 }
 
 int HazirYemekSayisi(const OyunDurumu& o)
@@ -47,7 +179,8 @@ void DokuCiz(Texture2D t,float x,float y,float w,float h,int s)
 
 void FotoCercevesiCiz(Texture2D foto,float x,float y,float w,float h,int s)
 {
-    DrawRectangle((int)((x+2)*s),(int)((y+2)*s),(int)(w*s),(int)(h*s),Fade(DARKBROWN,0.45f));
+    const float cercevePayi=2.0f*DEFTER_ICERIK_ZOOM;
+    DrawRectangle((int)((x+cercevePayi)*s),(int)((y+cercevePayi)*s),(int)(w*s),(int)(h*s),Fade(DARKBROWN,0.45f));
     DrawRectangle((int)(x*s),(int)(y*s),(int)(w*s),(int)(h*s),RAYWHITE);
 
     float oranHedef=w/h;
@@ -63,8 +196,97 @@ void FotoCercevesiCiz(Texture2D foto,float x,float y,float w,float h,int s)
         kaynak.height=foto.width/oranHedef;
         kaynak.y=(foto.height-kaynak.height)/2.0f;
     }
-    Rectangle hedef={(x+2)*s,(y+2)*s,(w-4)*s,(h-4)*s};
+    Rectangle hedef={(x+cercevePayi)*s,(y+cercevePayi)*s,
+                     (w-2*cercevePayi)*s,(h-2*cercevePayi)*s};
     DrawTexturePro(foto,kaynak,hedef,{0,0},0,WHITE);
+}
+
+std::string MetniSatirlaraBol(const char* metin,Font font,float boyut,
+                              float aralik,float enCokGenislik)
+{
+    const std::string kaynak(metin);
+    std::vector<std::string> satirlar;
+    size_t paragrafBaslangici=0;
+    while(paragrafBaslangici<=kaynak.size())
+    {
+        size_t paragrafSonu=kaynak.find('\n',paragrafBaslangici);
+        if(paragrafSonu==std::string::npos)paragrafSonu=kaynak.size();
+        const std::string paragraf=kaynak.substr(paragrafBaslangici,
+                                                 paragrafSonu-paragrafBaslangici);
+        std::string satir;
+        size_t baslangic=0;
+        while(baslangic<paragraf.size())
+        {
+            size_t bitis=paragraf.find(' ',baslangic);
+            if(bitis==std::string::npos)bitis=paragraf.size();
+            const std::string kelime=paragraf.substr(baslangic,bitis-baslangic);
+            const std::string aday=satir.empty()?kelime:satir+" "+kelime;
+            if(!satir.empty() && MeasureTextEx(font,aday.c_str(),boyut,aralik).x>enCokGenislik)
+            {
+                satirlar.push_back(satir);
+                satir=kelime;
+            }
+            else satir=aday;
+            baslangic=bitis+1;
+        }
+        satirlar.push_back(satir);
+        if(paragrafSonu==kaynak.size())break;
+        paragrafBaslangici=paragrafSonu+1;
+    }
+
+    std::string sonuc;
+    for(size_t i=0;i<satirlar.size();++i)
+    {
+        if(i>0)sonuc+='\n';
+        sonuc+=satirlar[i];
+    }
+    return sonuc;
+}
+
+int DefterNotuCiz(Font font,const char* metin,float x,float y,float w,int s,
+                  bool kalin=false)
+{
+    const float boyut=6.5f*DEFTER_ICERIK_ZOOM*s;
+    const float aralik=0.4f*DEFTER_ICERIK_ZOOM*s;
+    const std::string satirli=MetniSatirlaraBol(metin,font,boyut,aralik,w*s);
+    int satirSayisi=1;
+    for(char karakter:satirli)if(karakter=='\n')satirSayisi++;
+    size_t baslangic=0;
+    int satir=0;
+    while(baslangic<=satirli.size())
+    {
+        size_t bitis=satirli.find('\n',baslangic);
+        if(bitis==std::string::npos)bitis=satirli.size();
+        const std::string parca=satirli.substr(baslangic,bitis-baslangic);
+        const Vector2 konum={x*s,(y+satir*DEFTER_SATIR_YUKSEKLIGI)*s};
+        DrawTextEx(font,parca.c_str(),konum,boyut,aralik,DARKBROWN);
+        if(kalin)DrawTextEx(font,parca.c_str(),{konum.x+0.65f,konum.y},
+                            boyut,aralik,DARKBROWN);
+        if(bitis==satirli.size())break;
+        baslangic=bitis+1;
+        satir++;
+    }
+    return satirSayisi;
+}
+
+void AnaKarakterNotlariniCiz(Font font,int s)
+{
+    const float xSol=78.0f,xSag=171.0f,w=69.0f,y=122.0f;
+    const float satirYuksekligi=DEFTER_SATIR_YUKSEKLIGI;
+    int solVurguSatirlari=DefterNotuCiz(font,
+        "Bazen insan, nereye gitmek istediğini bilmeden yola çıkar.",
+        xSol,y,w,s,true);
+    DefterNotuCiz(font,
+        "Birkaç eşyam, az param ve cesaretimle geldim. Bahçe yabani otlarla doluydu; evin çatısı akıyordu.",
+        xSol,y+solVurguSatirlari*satirYuksekligi,w,s);
+
+    int sagGirisSatirlari=DefterNotuCiz(font,"Ve nedense...",xSag,y,w,s);
+    int sagVurguSatirlari=DefterNotuCiz(font,
+        "İlk kez hiçbir yere yetişmem gerekmiyormuş gibi hissettim.",
+        xSag,y+sagGirisSatirlari*satirYuksekligi,w,s,true);
+    DefterNotuCiz(font,
+        "O gün yerleştim. Ne kadar kalırım bilmiyorum. Şimdilik burası benim.",
+        xSag,y+(sagGirisSatirlari+sagVurguSatirlari)*satirYuksekligi,w,s);
 }
 
 void KitapOklariniCiz(int s,bool oncekiVar,bool sonrakiVar)
@@ -75,12 +297,10 @@ void KitapOklariniCiz(int s,bool oncekiVar,bool sonrakiVar)
     DrawTriangle({281.0f*s,120.0f*s},{269.0f*s,111.0f*s},{269.0f*s,129.0f*s},sagRenk);
 }
 
-int MusteriAniSayfasi(MusteriTuru musteri)
+int AcikDefterSayfasi(int puan)
 {
-    if(musteri==TAVSAN)return 1;
-    if(musteri==CAPYBARA)return 2;
-    if(musteri==KIRPI)return 3;
-    return 4;
+    const int sayfa=puan/10;
+    return sayfa<DEFTER_SAYFA_SAYISI?sayfa:DEFTER_SAYFA_SAYISI-1;
 }
 
 void PuanGoster(Texture2D rakamlar,int puan,int s)
@@ -105,6 +325,35 @@ void PuanGoster(Texture2D rakamlar,int puan,int s)
         if(digit<8)kaynak={(float)(digit*16),0,16,16};
         else kaynak={(float)((digit-8)*16),16,16,16};
         Rectangle hedef={(float)x,12.0f*s,8.0f*s,12.0f*s};
+        DrawTexturePro(rakamlar,kaynak,hedef,{0,0},0,WHITE);
+    }
+}
+
+void DefterBagPuaniCiz(Texture2D rakamlar,Font font,int sayfa,int s)
+{
+    const int puan=sayfa*10;
+
+    int rakamlarDizisi[10];
+    int rakamSayisi=0;
+    if(puan==0)rakamlarDizisi[rakamSayisi++]=0;
+    else
+    {
+        int kalan=puan;
+        while(kalan>0 && rakamSayisi<10)
+        {
+            rakamlarDizisi[rakamSayisi++]=kalan%10;
+            kalan/=10;
+        }
+    }
+    const float genislik=6.0f*s,aralik=1.0f*s;
+    float x=250.0f*s-rakamSayisi*(genislik+aralik)+aralik;
+    for(int i=rakamSayisi-1;i>=0;--i,x+=genislik+aralik)
+    {
+        const int rakam=rakamlarDizisi[i];
+        Rectangle kaynak=rakam<8
+            ?Rectangle{(float)(rakam*16),0,16,16}
+            :Rectangle{(float)((rakam-8)*16),16,16,16};
+        Rectangle hedef={x,157.0f*s,genislik,9.0f*s};
         DrawTexturePro(rakamlar,kaynak,hedef,{0,0},0,WHITE);
     }
 }
@@ -261,6 +510,9 @@ int main()
     mg.bugday=bg.bugday; mg.havuc=bg.havuc; mg.cilek=bg.cilek;
     mg.salatalik=bg.salatalik; mg.elma=bg.elma; mg.havucluKek=tg.havucluKek;
     mg.granola=tg.granola; mg.elmaliTurta=tg.elmaliTurta; mg.sandvic=tg.sandvic;
+    mg.secimCercevesi=LoadTexture("assets/cerceve.png");
+    mg.puff=LoadTexture("assets/puff.png");
+    mg.kareler=LoadTexture("assets/kare.png");
     Texture2D envanter=LoadTexture("assets/envanter.png");
     Texture2D kitapTezgah=LoadTexture("assets/kitap_tezgah.png");
     Texture2D acikKitap=LoadTexture("assets/open_book.png");
@@ -276,19 +528,42 @@ int main()
     SetTextureFilter(bildirimGorseli,TEXTURE_FILTER_POINT);
     const char* bildirimMesaji="Yeni bir sayfaniz var!";
     int bildirimKodSayisi=0;
-    Font bildirimFontu=LoadFontEx("assets/Patrick_Hand/PatrickHand-Regular.ttf",48,nullptr,0);
-    SetTextureFilter(bildirimFontu.texture,TEXTURE_FILTER_BILINEAR);
-    const char* defterFotoYollari[10]={
-        "assets/bahce-karakter.png","assets/karakter-mutfak.png",
-        "assets/bahce-tavsan.png","assets/selfie-bunny.png",
-        "assets/bahce-capybara.png","assets/selfie-capy.png",
-        "assets/bahce-kirpi.png","assets/selfie-kirpi.png",
-        "assets/bahce-kurba.png","assets/selfie-kurba.png"};
-    Texture2D defterFotograflari[10];
-    for(int i=0;i<10;++i)
+    DefterHikayesi defterHikayeleri[DEFTER_SAYFA_SAYISI]={};
+    if(!DefterHikayeleriniYukle(defterHikayeleri))
+        TraceLog(LOG_WARNING,"assets/hikayeler.txt okunamadi");
+    std::string fontKarakterleri="Yeni bir sayfaniz var!";
+    fontKarakterleri+=" HAVUCLU KEK GRANOLA ELMALI TURTA SANDVIC BUGDAY HAVUC CILEK ELMA SALATALIK";
+    fontKarakterleri+=" MALZEMELER SONUC AFIYET OLSUN! J / ESC: KAPAT BAĞ";
+    for(const DefterHikayesi& hikaye:defterHikayeleri)
     {
-        defterFotograflari[i]=LoadTexture(defterFotoYollari[i]);
-        SetTextureFilter(defterFotograflari[i],TEXTURE_FILTER_BILINEAR);
+        fontKarakterleri+=' ';
+        fontKarakterleri+=hikaye.baslik;
+        fontKarakterleri+=' ';
+        fontKarakterleri+=hikaye.sol;
+        fontKarakterleri+=' ';
+        fontKarakterleri+=hikaye.sag;
+    }
+    for(const char* notu:ANA_KARAKTER_NOTLARI)
+    {
+        fontKarakterleri+=' ';
+        fontKarakterleri+=notu;
+    }
+    int fontKodSayisi=0;
+    int* fontKodlari=LoadCodepoints(fontKarakterleri.c_str(),&fontKodSayisi);
+    Font bildirimFontu=LoadFontEx("assets/Patrick_Hand/PatrickHand-Regular.ttf",48,
+                                   fontKodlari,fontKodSayisi);
+    UnloadCodepoints(fontKodlari);
+    SetTextureFilter(bildirimFontu.texture,TEXTURE_FILTER_BILINEAR);
+    Texture2D defterFotograflari[DEFTER_SAYFA_SAYISI][2];
+    for(int i=0;i<DEFTER_SAYFA_SAYISI;++i)
+    for(int j=0;j<2;++j)
+    {
+        defterFotograflari[i][j]={0};
+        if(DEFTER_FOTO_YOLLARI[i][j])
+        {
+            defterFotograflari[i][j]=LoadTexture(DEFTER_FOTO_YOLLARI[i][j]);
+            SetTextureFilter(defterFotograflari[i][j],TEXTURE_FILTER_BILINEAR);
+        }
     }
 
     Texture2D filtrelenecek[]={bg.arkaPlan,bg.karakterOn,bg.karakterArka,bg.karakterSag,
@@ -296,7 +571,7 @@ int main()
         tg.arkaPlan,tg.tavsanSiparis,tg.tavsanMutlu,tg.balon,tg.havucluKek,
         tg.capybara,tg.capybaraMutlu,tg.kirpi,tg.kirpiMutlu,tg.kurbaga,tg.kurbagaMutlu,
         tg.granola,tg.elmaliTurta,tg.sandvic,
-        mg.arkaPlan,envanter,kitapTezgah,acikKitap};
+        mg.arkaPlan,mg.secimCercevesi,mg.puff,mg.kareler,envanter,kitapTezgah,acikKitap};
     for(Texture2D& t:filtrelenecek)Filtrele(t);
 
     OyunDurumu oyun;
@@ -308,8 +583,8 @@ int main()
     bool tarifKitabiAcik=false;
     int kitapSayfasi=0;
     int tarifKitabiSayfasi=0;
-    bool aniSayfasiAcik[5]={true,false,false,false,false};
     float kilitBildirimiSuresi=0.0f;
+    bool ilkMusteriKonusmaBekliyor=true;
 
     while(!WindowShouldClose())
     {
@@ -319,12 +594,23 @@ int main()
         {
             if(IsKeyPressed(KEY_F3) && IsSoundValid(sesler.meyveToplama))PlaySound(sesler.meyveToplama);
             if(IsKeyPressed(KEY_F4) && IsSoundValid(sesler.yemekHazir))PlaySound(sesler.yemekHazir);
-            if(IsKeyPressed(KEY_F5) && IsSoundValid(sesler.musteriMutlu))PlaySound(sesler.musteriMutlu);
+            if(IsKeyPressed(KEY_F5) && IsSoundValid(sesler.siparisTeslim[oyun.musteri]))
+                PlaySound(sesler.siparisTeslim[oyun.musteri]);
         }
         const int oncekiEnvanter=ToplamEnvanter(oyun);
         const int oncekiHazirYemek=HazirYemekSayisi(oyun);
+        const MusteriTuru oncekiMusteri=oyun.musteri;
         const bool oncekiSiparisTamamlandi=oyun.siparisTamamlandi;
-        bool yeniSayfaAcildi=false;
+        const Sahne oncekiSahne=sahne;
+        const bool oncekiKitapAcik=kitapAcik;
+        const bool oncekiTarifKitabiAcik=tarifKitabiAcik;
+        const bool oncekiEnvanterAcik=oyun.envanterAcik;
+        const UrunTuru oncekiMalzeme1=mutfak.secim1;
+        const UrunTuru oncekiMalzeme2=mutfak.secim2;
+        bool bahcedeHareketEdiyor=false;
+        bool bitkiEkildi=false;
+        bool malzemeSecildi=false;
+        const Vector2 oncekiBahceKonumu=bahce.karakterKonumu;
 
         if(IsKeyPressed(KEY_J) && !oyun.envanterAcik)
         {
@@ -335,8 +621,8 @@ int main()
             kitapAcik=false;
         if(tarifKitabiAcik && IsKeyPressed(KEY_ESCAPE))tarifKitabiAcik=false;
         if(kilitBildirimiSuresi>0.0f)kilitBildirimiSuresi-=dt;
-        int sonAcikSayfa=0;
-        for(int i=0;i<5;++i)if(aniSayfasiAcik[i])sonAcikSayfa=i;
+        int sonAcikSayfa=DEFTER_ONIZLEME
+            ?DEFTER_SAYFA_SAYISI-1:AcikDefterSayfasi(oyun.sevgiBagi);
         int oncekiKitapSayfasi=kitapSayfasi;
         if(kitapAcik && IsKeyPressed(KEY_RIGHT) && kitapSayfasi<sonAcikSayfa)kitapSayfasi++;
         if(kitapAcik && IsKeyPressed(KEY_LEFT) && kitapSayfasi>0)kitapSayfasi--;
@@ -346,6 +632,8 @@ int main()
         {
             Vector2 fare=GetMousePosition();
             float fareX=fare.x/S, fareY=fare.y/S;
+                fareX=(fareX-160.0f)/DEFTER_ZOOM+160.0f;
+                fareY=(fareY-120.0f)/DEFTER_ZOOM+120.0f;
             if(fareY>=50 && fareY<=190 && fareX>=25 && fareX<160 && kitapSayfasi>0)
                 kitapSayfasi--;
             else if(fareY>=50 && fareY<=190 && fareX>=160 && fareX<=295 && kitapSayfasi<sonAcikSayfa)
@@ -380,35 +668,75 @@ int main()
         }
         if(!oyun.envanterAcik && !kitapAcik && !tarifKitabiAcik)
         {
-            if(sahne==BAHCE_SAHNESI)BahceyiGuncelle(bahce,oyun,sahne,dt);
+            if(sahne==BAHCE_SAHNESI)
+            {
+                BahceyiGuncelle(bahce,oyun,sahne,dt);
+                bitkiEkildi=bahce.ekimYapildi;
+                bahcedeHareketEdiyor=sahne==BAHCE_SAHNESI &&
+                    (bahce.karakterKonumu.x!=oncekiBahceKonumu.x ||
+                     bahce.karakterKonumu.y!=oncekiBahceKonumu.y);
+            }
             else if(sahne==TEZGAH_SAHNESI)TezgahiGuncelle(tezgah,oyun,sahne,dt);
-            else MutfagiGuncelle(mutfak,oyun,sahne,dt);
+            else
+            {
+                MutfagiGuncelle(mutfak,oyun,sahne,dt);
+                malzemeSecildi=mutfak.secim1!=oncekiMalzeme1 ||
+                               mutfak.secim2!=oncekiMalzeme2;
+            }
 
             if(!oncekiSiparisTamamlandi && oyun.siparisTamamlandi)
             {
+                int oncekiAcikAniSayfasi=AcikDefterSayfasi(oyun.sevgiBagi);
                 oyun.sevgiBagi+=10;
-                int yeniAniSayfasi=MusteriAniSayfasi(oyun.musteri);
-                if(!aniSayfasiAcik[yeniAniSayfasi])
+                int yeniAcikAniSayfasi=AcikDefterSayfasi(oyun.sevgiBagi);
+                if(yeniAcikAniSayfasi>oncekiAcikAniSayfasi)
                 {
-                    aniSayfasiAcik[yeniAniSayfasi]=true;
                     kilitBildirimiSuresi=2.60f;
-                    yeniSayfaAcildi=true;
                 }
             }
 
             if(sesHazir)
             {
-                if(oncekiSiparisTamamlandi==false && oyun.siparisTamamlandi &&
-                   IsSoundValid(sesler.musteriMutlu))
-                    PlaySound(sesler.musteriMutlu);
+                if(ilkMusteriKonusmaBekliyor || oyun.musteri!=oncekiMusteri)
+                {
+                    Sound konusma=sesler.musteriKonusma[oyun.musteri];
+                    if(IsSoundValid(konusma))PlaySound(konusma);
+                    ilkMusteriKonusmaBekliyor=false;
+                }
+                else if(!oncekiSiparisTamamlandi && oyun.siparisTamamlandi)
+                {
+                    KonusmalariDurdur(sesler);
+                    Sound teslimSesi=sesler.siparisTeslim[oyun.musteri];
+                    if(IsSoundValid(teslimSesi))PlaySound(teslimSesi);
+                }
                 else if(HazirYemekSayisi(oyun)>oncekiHazirYemek &&
                         IsSoundValid(sesler.yemekHazir))
                     PlaySound(sesler.yemekHazir);
+                else if(bitkiEkildi && IsSoundValid(sesler.ekme))
+                    PlaySound(sesler.ekme);
+                else if(malzemeSecildi && IsSoundValid(sesler.meyveToplama))
+                    PlaySound(sesler.meyveToplama);
                 else if(sahne==BAHCE_SAHNESI && ToplamEnvanter(oyun)>oncekiEnvanter &&
                         IsSoundValid(sesler.meyveToplama))
                     PlaySound(sesler.meyveToplama);
             }
         }
+
+        if(sesHazir && sesler.yurume.ctxData!=nullptr)
+        {
+            if(bahcedeHareketEdiyor)
+            {
+                if(!IsMusicStreamPlaying(sesler.yurume))PlayMusicStream(sesler.yurume);
+                UpdateMusicStream(sesler.yurume);
+            }
+            else if(IsMusicStreamPlaying(sesler.yurume))StopMusicStream(sesler.yurume);
+        }
+
+        const bool ekranDegisti=sahne!=oncekiSahne || kitapAcik!=oncekiKitapAcik ||
+            tarifKitabiAcik!=oncekiTarifKitabiAcik || oyun.envanterAcik!=oncekiEnvanterAcik;
+        if(sesHazir && (ekranDegisti ||
+           (!oncekiSiparisTamamlandi && oyun.siparisTamamlandi)))
+            KonusmalariDurdur(sesler);
 
         BeginDrawing(); ClearBackground(BLACK);
         if(sahne==BAHCE_SAHNESI)BahceyiCiz(bahce,bg,S);
@@ -425,12 +753,38 @@ int main()
         if(kitapAcik)
         {
             DrawRectangle(0,0,320*S,240*S,Fade(BLACK,0.45f));
-            DokuCiz(acikKitap,32,40,256,160,S);
-            int solFoto=kitapSayfasi*2;
-            int sagFoto=solFoto+1;
-            FotoCercevesiCiz(defterFotograflari[solFoto],80,74,66,50,S);
-            FotoCercevesiCiz(defterFotograflari[sagFoto],174,74,66,50,S);
+            Camera2D kitapKamerasi={{160.0f*S,120.0f*S},{160.0f*S,120.0f*S},0,DEFTER_ZOOM};
+            BeginMode2D(kitapKamerasi);
+            DokuCiz(acikKitap,26,31,268,178,S);
+            if(kitapSayfasi==0)
+            {
+                FotoCercevesiCiz(defterFotograflari[kitapSayfasi][0],78,66,69,52.5f,S);
+                FotoCercevesiCiz(defterFotograflari[kitapSayfasi][1],172,66,69,52.5f,S);
+                AnaKarakterNotlariniCiz(bildirimFontu,S);
+            }
+            else if(kitapSayfasi<=4)
+            {
+                FotoCercevesiCiz(defterFotograflari[kitapSayfasi][0],78,66,69,52.5f,S);
+                FotoCercevesiCiz(defterFotograflari[kitapSayfasi][1],172,66,69,52.5f,S);
+                int vurguSatirlari=DefterNotuCiz(bildirimFontu,defterHikayeleri[kitapSayfasi].baslik.c_str(),
+                                                  78,121,69,S,true);
+                DefterNotuCiz(bildirimFontu,defterHikayeleri[kitapSayfasi].sol.c_str(),
+                    78,121+vurguSatirlari*DEFTER_SATIR_YUKSEKLIGI,69,S);
+                DefterNotuCiz(bildirimFontu,defterHikayeleri[kitapSayfasi].sag.c_str(),172,121,66,S);
+            }
+            else
+            {
+                FotoCercevesiCiz(defterFotograflari[kitapSayfasi][0],78,66,69,52.5f,S);
+                int vurguSatirlari=DefterNotuCiz(bildirimFontu,defterHikayeleri[kitapSayfasi].baslik.c_str(),
+                                                  78,121,69,S,true);
+                DefterNotuCiz(bildirimFontu,defterHikayeleri[kitapSayfasi].sol.c_str(),
+                              78,121+vurguSatirlari*DEFTER_SATIR_YUKSEKLIGI,69,S);
+                DefterNotuCiz(bildirimFontu,defterHikayeleri[kitapSayfasi].sag.c_str(),
+                              171,67,77,S);
+            }
+            DefterBagPuaniCiz(rakamlar,bildirimFontu,kitapSayfasi,S);
             KitapOklariniCiz(S,kitapSayfasi>0,kitapSayfasi<sonAcikSayfa);
+            EndMode2D();
         }
         if(tarifKitabiAcik)
             TarifKitabiCiz(acikKitap,bildirimFontu,mg,tarifKitabiSayfasi,S);
@@ -444,7 +798,9 @@ int main()
     UnloadTexture(bg.karakterSag); UnloadTexture(bg.karakterSol); UnloadTexture(bg.bugday);
     UnloadTexture(bg.havuc); UnloadTexture(bg.cilek); UnloadTexture(bg.salatalik); UnloadTexture(bg.elma);
     UnloadTexture(tg.arkaPlan); UnloadTexture(tg.tavsanSiparis); UnloadTexture(tg.tavsanMutlu);
-    UnloadTexture(tg.balon); UnloadTexture(tg.havucluKek); UnloadTexture(mg.arkaPlan); UnloadTexture(envanter);
+    UnloadTexture(tg.balon); UnloadTexture(tg.havucluKek); UnloadTexture(mg.arkaPlan);
+    UnloadTexture(mg.secimCercevesi); UnloadTexture(mg.puff); UnloadTexture(mg.kareler);
+    UnloadTexture(envanter);
     UnloadTexture(tg.capybara); UnloadTexture(tg.capybaraMutlu);
     UnloadTexture(tg.kirpi); UnloadTexture(tg.kirpiMutlu);
     UnloadTexture(tg.kurbaga); UnloadTexture(tg.kurbagaMutlu);
@@ -453,7 +809,9 @@ int main()
     UnloadTexture(rakamlar);
     UnloadTexture(bildirimGorseli);
     UnloadFont(bildirimFontu);
-    for(int i=0;i<10;++i)UnloadTexture(defterFotograflari[i]);
+    for(int i=0;i<DEFTER_SAYFA_SAYISI;++i)
+    for(int j=0;j<2;++j)
+        if(DEFTER_FOTO_YOLLARI[i][j])UnloadTexture(defterFotograflari[i][j]);
     if(sesHazir)
     {
         SesleriKapat(sesler);
